@@ -1,2 +1,1 @@
-# JavaHW
 Java Homeworks Repo
