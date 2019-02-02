@@ -1,26 +1,18 @@
 package ru.hse.kuzmins.hashtable;
 
-/**
- * This class implements a linked list. Each <code>Node</code> has access to both previous and next <code>Node</code>.
- */
+import org.jetbrains.annotations.NotNull;
+
+/** This class implements a linked list. Each <code>Node</code> has access to both previous and next <code>Node</code>. */
 public class LinkedList {
-    /**
-     * First node of the list.
-     */
+    /** First node of the list. */
     private Node begin = null;
-    /**
-     * Last node of the list.
-     */
+    /** Last node of the list. */
     private Node end = null;
-    /**
-     * Size of the list.
-     */
+    /** Size of the list. */
     private int size = 0;
 
-    /**
-     * Constructs an empty list with <code>begin = end = null</code>
-     */
-    LinkedList() {}
+    /** Constructs an empty list with <code>begin = end = null</code> */
+    public LinkedList() {}
 
     /**
      * Returns the number of stored elements.
@@ -82,9 +74,10 @@ public class LinkedList {
      * Adds the specified object to the end of the list.
      * @param data the object that is added
      */
-    public void add(Object data) {
+    public void add(@NotNull Object data) {
         if (isEmpty()) {
-            begin = end = new Node(null, null, data);
+            begin = new Node(null, null, data);
+            end = begin;
         } else {
             Node node = new Node(end, null, data);
             end.next = node;
@@ -120,9 +113,9 @@ public class LinkedList {
     /**
      * Assigns the object at position <code>index</code> to value <code>value</code>.
      * @param index the index of the element that has its value changed
-     * @param value the new value of the element
+     * @param value the new value of the element, mustn't be null
      */
-    public void set(int index, Object value) {
+    public void set(int index, @NotNull Object value) {
         Node node = getNode(index);
         if (node != null)
             node.data = value;
@@ -132,13 +125,14 @@ public class LinkedList {
      * Clears the list.
      */
     public void clear() {
-        begin = end = null;
+        begin = null;
+        end = null;
         size = 0;
     }
 
     /**
      * Checks if the list is empty.
-     * @return true if the list is empty; false otherwise
+     * @return <code>true</code> if the list is empty; <code>false</code> otherwise
      */
     public boolean isEmpty() {
         return size == 0;
@@ -149,16 +143,16 @@ public class LinkedList {
      * @return an array containing all the elements of the list in the proper order (from first to last element)
      */
     public Object[] toArray() {
-        Object[] arr = new Object[size];
+        Object[] arrFromList = new Object[size];
 
         Node node = begin;
         int index = 0;
         while (node != null) {
-            arr[index++] = node.data;
+            arrFromList[index++] = node.data;
             node = node.next;
         }
 
-        return arr;
+        return arrFromList;
     }
 
     /**
@@ -180,32 +174,22 @@ public class LinkedList {
         return node;
     }
 
-    /**
-     * Class for storing nodes of the list.
-     */
+    /** Class for storing nodes of the list. */
     private class Node {
-        /**
-         * Stores the previous node. This field is <code>null</code> if there is no such node.
-         */
-        Node prev = null;
-        /**
-         * Stores the next node. This field is <code>null</code> if there is no such node.
-         */
-        Node next = null;
-        /**
-         * Stores the data of the node.
-         */
-        Object data = null;
+        /** Stores the previous node. This field is <code>null</code> if there is no such node. */
+        private Node prev;
+        /** Stores the next node. This field is <code>null</code> if there is no such node. */
+        private Node next;
+        /** Stores the data of the node. */
+        private @NotNull Object data;
 
         /**
-         * Constructs an instance of <code>Node</code> with specified <code>prev</code>,
-         *                                                            <code>next</code> and
-         *                                                            <code>data</code>
+         * Constructs an instance of <code>Node</code> with specified <code>prev</code>, <code>next</code> and <code>data</code>
          * @param prev the previous node
          * @param next the next node
-         * @param data the stored data
+         * @param data the stored data, mustn't be <code>null</code>
          */
-        Node(Node prev, Node next, Object data) {
+        private Node(Node prev, Node next, @NotNull Object data) {
             this.prev = prev;
             this.next = next;
             this.data = data;

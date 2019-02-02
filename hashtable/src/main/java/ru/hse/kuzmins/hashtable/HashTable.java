@@ -1,22 +1,19 @@
 package ru.hse.kuzmins.hashtable;
 
-/**
- * This class implements a hashtable which maps keys to values. Both values and keys are of type String
+import org.jetbrains.annotations.NotNull;
+
+/**This class implements a hashtable which maps keys to values. Both values and keys are of type String
  * An instance of HashTable has one initial parameter -- its capacity.
  * The capacity is the number of possible hashes.
  * In case of hash collision data is stored in form of a list, thus finding and deleting both take linear time
- * in the worst case.
- */
+ * in the worst case. */
 public class HashTable {
-    /**
-     * The number of stored keys
-     */
+    /** The number of stored keys */
     private int size = 0;
-    /**
-     * The maximal number of keys which can be stored.
-     * Note -- table is rebuild in case number of stored keys is greater the the half of its capacity.
-     */
+    /** The maximal number of keys which can be stored.
+     * Note -- table is rebuild in case number of stored keys is greater the the half of its capacity. */
     private int capacity = 10;
+    /** Boxes for storing pairs <code>(key, value)</code> */
     private LinkedList[] table;
 
     /**
@@ -29,9 +26,7 @@ public class HashTable {
         table = new LinkedList[capacity];
     }
 
-    /**
-     * Constructs an empty hashtable with default initial capacity (10).
-     */
+    /** Constructs an empty hashtable with default initial capacity (10). */
     public HashTable() {
         table = new LinkedList[capacity];
     }
@@ -43,7 +38,7 @@ public class HashTable {
      * @param mod the modulo used in calculation
      * @return the hash of <code>key</code> modulo <code>mod</code>
      */
-    private int getHash(String key, int mod) {
+    private int getHash(@NotNull String key, int mod) {
         int hash = key.hashCode() % mod;
         if (hash < 0) {
             hash += mod;
@@ -51,11 +46,9 @@ public class HashTable {
         return hash;
     }
 
-    /**
-     * Rebuilds a hashtable if its size is greater than half of its capacity.
+    /** Rebuilds a hashtable if its size is greater than half of its capacity.
      * Rebuild is done via creating a new table with former size and capacity multiplied by 2.
-     * All keys are rehashed modulo new capacity.
-     */
+     * All keys are rehashed modulo new capacity. */
     private void rebuild() {
         if (size * 2 < capacity)
             return;
@@ -67,8 +60,8 @@ public class HashTable {
                 continue;
             }
 
-            Object[] lst = list.toArray();
-            for (Object obj : lst) {
+            Object[] curBox = list.toArray();
+            for (Object obj : curBox) {
                 Data elem = (Data) obj;
                 int hash = getHash(elem.key, capacity);
 
@@ -94,7 +87,7 @@ public class HashTable {
      * @param key the key to search for
      * @return <code>true</code> if the key maps to some value; <code>false</code> otherwise
      */
-    public boolean contains(String key) {
+    public boolean contains(@NotNull String key) {
         int hash = getHash(key, capacity);
         return table[hash] != null && table[hash].contains(new Data(key, null));
     }
@@ -120,11 +113,11 @@ public class HashTable {
 
     /**
      * Maps the given key to the given value.
-     * @param key key which is mapped to
-     * @param value value that is associated to the key
+     * @param key key which is mapped to, mustn't be <cdde>null</cdde>
+     * @param value value that is associated to the key, mustn't be <code>null</code>
      * @return the former stored value mapped by the key; <code>null</code> otherwise
      */
-    public String put(String key, String value) {
+    public String put(@NotNull String key, @NotNull String value) {
         rebuild();
 
         int hash = getHash(key, capacity);
@@ -150,7 +143,7 @@ public class HashTable {
      * @param key the key that needs to be removed
      * @return the former stored value mapped by the key; <code>null</code> otherwise
      */
-    public String remove(String key) {
+    public String remove(@NotNull String key) {
         int hash = getHash(key, capacity);
         if (table[hash] == null)
             return null;
@@ -166,10 +159,7 @@ public class HashTable {
         return res;
     }
 
-    /**
-     * Clear this table, so that it contains no keys
-     * Note that the capacity of the hashtable does not change after clear.
-     */
+    /** Clears this table, so that it contains no keys */
     public void clear() {
         for (LinkedList list : table) {
             if (list == null || list.isEmpty())
@@ -177,19 +167,16 @@ public class HashTable {
             list.clear();
         }
         size = 0;
+        capacity = 10;
     }
 
     /**
      * Implements class for storing pairs <code>(Key, Value)</code>.
      */
     private class Data {
-        /**
-         * key stored in this Data instance.
-         */
+        /** key stored in this Data instance. */
         private String key;
-        /**
-         * value stored int this Data instance.
-         */
+        /** value stored int this Data instance. */
         private String value;
 
         /**
@@ -197,7 +184,7 @@ public class HashTable {
          * @param key key associated to this instance
          * @param value value associated to this instance
          */
-        Data(String key, String value) {
+        private Data(String key, String value) {
             this.key = key;
             this.value = value;
         }

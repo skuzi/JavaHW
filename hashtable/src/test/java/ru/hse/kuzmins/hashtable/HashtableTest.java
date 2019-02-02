@@ -17,7 +17,6 @@ class HashTableTest {
 
     @Test
     void sizeEmpty() {
-        HashTable ht = new HashTable();
         assertEquals(0, ht.size());
     }
 
