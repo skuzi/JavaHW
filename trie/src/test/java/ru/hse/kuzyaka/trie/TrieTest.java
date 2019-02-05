@@ -3,6 +3,9 @@ package ru.hse.kuzyaka.trie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrieTest {
@@ -160,5 +163,64 @@ class TrieTest {
         assertEquals(0, trie.howManyStartsWithPrefix("abacabaa"));
         assertEquals(4, trie.howManyStartsWithPrefix("ab"));
         assertEquals(2, trie.howManyStartsWithPrefix("aba"));
+    }
+
+    @Test
+    void serializeMoveData() {
+        for(int i = 0; i < 10; i++) {
+            trie.add(String.valueOf(i));
+        }
+        Trie getter = new Trie();
+
+        moveData(trie, getter);
+
+        for(int i = 0; i < 10; i++) {
+            assertTrue(getter.contains(String.valueOf(i)));
+        }
+
+        assertEquals(trie.size(), getter.size());
+    }
+
+    @Test
+    void serializeReplaceData() {
+        for(int i = 0; i < 10; i++) {
+            trie.add(String.valueOf(i));
+        }
+
+        Trie getter = new Trie();
+        for(int i = 20; i < 30; i++) {
+            getter.add(String.valueOf(i));
+        }
+
+        moveData(trie, getter);
+
+        for(int i = 20; i < 30; i++) {
+            assertFalse(getter.contains(String.valueOf(i)));
+        }
+
+        assertEquals(trie.size(), getter.size());
+    }
+
+    @Test
+    void serializeEmpty() {
+
+        Trie getter = new Trie();
+        for(int i = 0; i < 20; i++) {
+            getter.add(String.valueOf(i));
+        }
+
+        moveData(trie, getter);
+
+        for(int i = 0; i < 10; i++) {
+            assertFalse(trie.contains(String.valueOf(i)));
+        }
+        assertEquals(0, getter.size());
+    }
+
+    void moveData(Trie from, Trie to) {
+        var out = new ByteArrayOutputStream();
+        assertDoesNotThrow(() -> from.serialize(out));
+        var in = new ByteArrayInputStream(out.toByteArray());
+        assertDoesNotThrow(() -> to.deserialize(in));
     }
 }
