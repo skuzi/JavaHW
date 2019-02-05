@@ -49,7 +49,7 @@ class TrieTest {
 
     @Test
     void addSome() {
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             assertTrue(trie.add(String.valueOf(i)));
         }
 
@@ -58,7 +58,7 @@ class TrieTest {
         assertTrue(trie.contains(String.valueOf(20)));
         assertFalse(trie.contains(String.valueOf(100)));
 
-        for(int i = 10; i < 20; i++) {
+        for (int i = 10; i < 20; i++) {
             assertFalse(trie.add(String.valueOf(i)));
         }
     }
@@ -85,15 +85,15 @@ class TrieTest {
     @Test
     void removeSome() {
         assertFalse(trie.remove("aa"));
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             trie.add(String.valueOf(i));
         }
 
-        for(int i = 10; i < 20; i++) {
+        for (int i = 10; i < 20; i++) {
             assertTrue(trie.remove(String.valueOf(i)));
         }
 
-        for(int i = 10; i < 20; i++) {
+        for (int i = 10; i < 20; i++) {
             assertFalse(trie.remove(String.valueOf(i)));
         }
 
@@ -107,7 +107,7 @@ class TrieTest {
 
     @Test
     void removeNotAdded() {
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             assertFalse(trie.remove(String.valueOf(i)));
         }
     }
@@ -141,7 +141,7 @@ class TrieTest {
 
     @Test
     void containsNotAdded() {
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
             assertFalse(trie.contains(String.valueOf(i)));
         }
     }
@@ -149,7 +149,7 @@ class TrieTest {
     @Test
     void howManyStartsWithPrefix() {
         String words[] = {"a", "abacaba", "abcabc", "bc", "abcbac", "adbcc", "abac", "acc"};
-        for(String word : words) {
+        for (String word : words) {
             trie.add(word);
         }
         assertTrue(trie.contains("abacaba"));
@@ -167,14 +167,14 @@ class TrieTest {
 
     @Test
     void serializeMoveData() {
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             trie.add(String.valueOf(i));
         }
         Trie getter = new Trie();
 
         moveData(trie, getter);
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             assertTrue(getter.contains(String.valueOf(i)));
         }
 
@@ -183,18 +183,18 @@ class TrieTest {
 
     @Test
     void serializeReplaceData() {
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             trie.add(String.valueOf(i));
         }
 
         Trie getter = new Trie();
-        for(int i = 20; i < 30; i++) {
+        for (int i = 20; i < 30; i++) {
             getter.add(String.valueOf(i));
         }
 
         moveData(trie, getter);
 
-        for(int i = 20; i < 30; i++) {
+        for (int i = 20; i < 30; i++) {
             assertFalse(getter.contains(String.valueOf(i)));
         }
 
@@ -205,13 +205,13 @@ class TrieTest {
     void serializeEmpty() {
 
         Trie getter = new Trie();
-        for(int i = 0; i < 20; i++) {
+        for (int i = 0; i < 20; i++) {
             getter.add(String.valueOf(i));
         }
 
         moveData(trie, getter);
 
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             assertFalse(trie.contains(String.valueOf(i)));
         }
         assertEquals(0, getter.size());

@@ -26,7 +26,7 @@ public class Trie {
         var lastNode = root.moveWithAdd(element);
         var res = false;
 
-        if(!lastNode.isTerminal) {
+        if (!lastNode.isTerminal) {
             lastNode.makeTerminal();
             res = true;
         }
@@ -38,7 +38,7 @@ public class Trie {
         var lastNode = root.moveWithoutAdd(element);
         var res = false;
 
-        if(lastNode.isTerminal && lastNode.depth == element.length()) {
+        if (lastNode.isTerminal && lastNode.depth == element.length()) {
             lastNode.makeNotTerminal();
             res = true;
         }
@@ -70,7 +70,6 @@ public class Trie {
     }
 
 
-
     private class TrieNode {
         private boolean isTerminal;
         private int depth;
@@ -97,7 +96,7 @@ public class Trie {
         }
 
         private TrieNode getNext(char c) {
-            if(!hasNext(c)) {
+            if (!hasNext(c)) {
                 next.put(c, new TrieNode(depth + 1, this, c));
             }
             return next.get(c);
@@ -105,7 +104,7 @@ public class Trie {
 
         private TrieNode moveWithAdd(@NotNull String element) {
             var curNode = this;
-            for(char c : element.toCharArray()) {
+            for (char c : element.toCharArray()) {
                 curNode = curNode.getNext(c);
             }
             return curNode;
@@ -114,7 +113,7 @@ public class Trie {
         private TrieNode moveWithoutAdd(@NotNull String element) {
             var curNode = this;
             for (char c : element.toCharArray()) {
-                if(!curNode.hasNext(c))
+                if (!curNode.hasNext(c))
                     break;
                 curNode = curNode.getNext(c);
             }
@@ -127,10 +126,10 @@ public class Trie {
 
             var fatherNode = father;
             var node = this;
-            while(fatherNode != null) {
+            while (fatherNode != null) {
                 fatherNode.terminalsInSubtree--;
 
-                if(node.terminalsInSubtree == 0) {
+                if (node.terminalsInSubtree == 0) {
                     fatherNode.next.remove(node.lastOnPath);
                 }
 
@@ -143,7 +142,7 @@ public class Trie {
             isTerminal = true;
 
             var node = this;
-            while(node != null) {
+            while (node != null) {
                 node.terminalsInSubtree++;
                 node = node.father;
             }
@@ -156,7 +155,7 @@ public class Trie {
             out.writeChar(lastOnPath);
             out.writeInt(next.size());
 
-            for(var entry : next.entrySet()) {
+            for (var entry : next.entrySet()) {
                 out.writeChar(entry.getKey());
                 entry.getValue().serializeSubtree(out);
             }
@@ -168,7 +167,7 @@ public class Trie {
             depth = in.readInt();
             lastOnPath = in.readChar();
             int nextSize = in.readInt();
-            for(int i = 0; i < nextSize; i++) {
+            for (int i = 0; i < nextSize; i++) {
                 char edgeSymbol = in.readChar();
                 var son = new TrieNode();
 
