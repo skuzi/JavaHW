@@ -21,7 +21,7 @@ public class Trie {
     }
 
     public boolean add(@NotNull String element) {
-            var lastNode = root.moveWithAdd(element);
+        var lastNode = root.moveWithAdd(element);
         var res = false;
 
         if(!lastNode.isTerminal) {
@@ -73,6 +73,7 @@ public class Trie {
             this.lastOnPath = lastOnPath;
             next = new HashMap<>();
             terminalsInSubtree = 0;
+            isTerminal = false;
         }
 
         private boolean hasNext(char c) {
@@ -97,7 +98,7 @@ public class Trie {
         private TrieNode moveWithoutAdd(String element) {
             var curNode = this;
             for (char c : element.toCharArray()) {
-                if(!hasNext(c))
+                if(!curNode.hasNext(c))
                     break;
                 curNode = curNode.getNext(c);
             }
@@ -117,8 +118,8 @@ public class Trie {
                     fatherNode.next.remove(node.lastOnPath);
                 }
 
-                fatherNode = node.father;
                 node = node.father;
+                fatherNode = node.father;
             }
         }
 
