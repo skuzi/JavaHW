@@ -3,6 +3,7 @@ package ru.hse.kuzyaka.trie;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.*;
 import java.util.HashMap;
 
 public class Trie {
@@ -52,6 +53,20 @@ public class Trie {
         } else {
             return 0;
         }
+    }
+
+    void serialize(@NotNull OutputStream out) throws IOException {
+        var dataOut = new DataOutputStream(out);
+        root.serializeSubtree(dataOut);
+        dataOut.flush();
+        dataOut.close();
+    }
+
+    void deserialize(@NotNull InputStream in) throws IOException {
+        var dataIn = new DataInputStream(in);
+        root = new TrieNode();
+        root.deserializeSubtree(dataIn);
+        in.close();
     }
 
 
@@ -131,6 +146,36 @@ public class Trie {
             while(node != null) {
                 node.terminalsInSubtree++;
                 node = node.father;
+            }
+        }
+
+        private void serializeSubtree(@NotNull DataOutputStream out) throws IOException {
+            out.writeBoolean(isTerminal);
+            out.writeInt(terminalsInSubtree);
+            out.writeInt(depth);
+            out.writeChar(lastOnPath);
+            out.writeInt(next.size());
+
+            for(var entry : next.entrySet()) {
+                out.writeChar(entry.getKey());
+                entry.getValue().serializeSubtree(out);
+            }
+        }
+
+        private void deserializeSubtree(@NotNull DataInputStream in) throws IOException {
+            isTerminal = in.readBoolean();
+            terminalsInSubtree = in.readInt();
+            depth = in.readInt();
+            lastOnPath = in.readChar();
+            int nextSize = in.readInt();
+            for(int i = 0; i < nextSize; i++) {
+                char edgeSymbol = in.readChar();
+                var son = new TrieNode();
+
+                son.deserializeSubtree(in);
+
+                next.put(edgeSymbol, son);
+                son.father = this;
             }
         }
     }
