@@ -18,6 +18,7 @@ public class Trie {
 
     /**
      * Returns the size of the trie (the number of stored strings)
+     *
      * @return the number of stored strings
      */
     public int size() {
@@ -26,6 +27,7 @@ public class Trie {
 
     /**
      * Checks if the given string is in this trie
+     *
      * @param element the string which is looked for; mustn't be <code>null</code>
      * @return <code>true</code> if the trie contains this string; <code>false</code> otherwise
      */
@@ -36,6 +38,7 @@ public class Trie {
 
     /**
      * Adds the given string to this trie if it wasn't already in it
+     *
      * @param element the string which is added, mustn't be <code>null</code>
      * @return <code>true</code> if adding was successful; <code>false</code> otherwise
      */
@@ -53,6 +56,7 @@ public class Trie {
 
     /**
      * Removes the given string from this trie if the trie actually contains it
+     *
      * @param element the string which is removed, mustn't be <code>null</code>
      * @return <code>true</code> if removal was successful; <code>false</code> otherwise
      */
@@ -70,6 +74,7 @@ public class Trie {
 
     /**
      * Tells how many strings in this trie start with the given prefix
+     *
      * @param prefix the common prefix of all counted strings
      * @return the number of strings in this trie starting with the prefix
      */
@@ -84,6 +89,7 @@ public class Trie {
 
     /**
      * Writes this trie as a byte sequence
+     *
      * @param out <code>OutputStream</code> to write trie to
      * @throws IOException
      */
@@ -96,6 +102,7 @@ public class Trie {
 
     /**
      * Reads a trie from the given <code>InputStream</code>. Any data which the trie contained earlier, is discarded.
+     *
      * @param in <code>InputStream</code> to read from
      * @throws IOException
      */
@@ -128,6 +135,7 @@ public class Trie {
 
         /**
          * Constructs node with given depth, parent node and character on the edge to the parent
+         *
          * @param depth depth value
          * @param parent reference to parent
          * @param lastOnPath character on the edge to the parent
@@ -143,6 +151,7 @@ public class Trie {
 
         /**
          * Checks if given character exists on some edge from this node, excluding edge to the parent
+         *
          * @param c character which transition is looked for
          * @return <code>true</code> if there is such transition; <code>false</code> otherwise
          */
@@ -152,6 +161,7 @@ public class Trie {
 
         /**
          * Adds the transition by the given character from this node if there was no such
+         *
          * @param c character which transition is looked for
          * @return node which represents the given char (if there was no such transition, new node is made)
          */
@@ -164,6 +174,7 @@ public class Trie {
 
         /**
          * Looks for given string in the subtree of this node. New nodes are made if needed.
+         *
          * @param element string to look for
          * @return node representing given string in the subtree of this node.
          */
@@ -177,6 +188,7 @@ public class Trie {
 
         /**
          * Looks for given string in the subtree of this node. No new nodes are added.
+         *
          * @param element string to look for
          * @return node where the last existing transition ended
          */
@@ -223,7 +235,8 @@ public class Trie {
         }
 
         /**
-         * Writes the subtree of this node to the given <code>DataOutputStream</code>
+         * Writes the subtree of this node to the given <code>DataOutputStream</code> as a byte sequence
+         *
          * @param out <code>DataOutputStream</code> to write to, mustn't be <code>null</code>
          * @throws IOException
          */
