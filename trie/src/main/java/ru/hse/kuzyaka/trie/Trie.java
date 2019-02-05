@@ -1,6 +1,7 @@
 package ru.hse.kuzyaka.trie;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 
@@ -60,14 +61,14 @@ public class Trie {
         private int depth;
         private int terminalsInSubtree;
         private HashMap<Character, TrieNode> next;
-        private TrieNode father;
+        private @Nullable TrieNode father;
         private char lastOnPath;
 
         private TrieNode() {
             this(0, null, '\0');
         }
 
-        private TrieNode(int depth, TrieNode father, char lastOnPath) {
+        private TrieNode(int depth, @Nullable TrieNode father, char lastOnPath) {
             this.depth = depth;
             this.father = father;
             this.lastOnPath = lastOnPath;
@@ -87,7 +88,7 @@ public class Trie {
             return next.get(c);
         }
 
-        private TrieNode moveWithAdd(String element) {
+        private TrieNode moveWithAdd(@NotNull String element) {
             var curNode = this;
             for(char c : element.toCharArray()) {
                 curNode = curNode.getNext(c);
@@ -95,7 +96,7 @@ public class Trie {
             return curNode;
         }
 
-        private TrieNode moveWithoutAdd(String element) {
+        private TrieNode moveWithoutAdd(@NotNull String element) {
             var curNode = this;
             for (char c : element.toCharArray()) {
                 if(!curNode.hasNext(c))
