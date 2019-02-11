@@ -8,294 +8,294 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LinkedListTest {
 
-    private LinkedList lst;
+    private LinkedList list;
 
     @BeforeEach
     void initList() {
-        lst = new LinkedList();
+        list = new LinkedList();
     }
 
     @Test
     void sizeEmptyLit() {
-        assertEquals(0, lst.size());
+        assertEquals(0, list.size());
     }
 
     @Test
     void sizeAfterAdds() {
         for (int i = 0; i < 100; i++) {
-            lst.add(i);
+            list.add(i);
         }
 
-        assertEquals(100, lst.size());
+        assertEquals(100, list.size());
     }
 
     @Test
     void sizeAfterAddsAndRemovals() {
         for (int i = 0; i < 100; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
         for (int i = 0; i < 20; i++) {
-            lst.remove(lst.size() - i - 1);
+            list.remove(list.size() - i - 1);
         }
 
         for (int i = 0; i < 20; i++) {
-            lst.remove(0);
+            list.remove(0);
         }
 
-        assertEquals(60, lst.size());
+        assertEquals(60, list.size());
     }
 
     @Test
     void sizeAfterClear() {
         for (int i = 0; i < 100; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.clear();
-        assertEquals(0, lst.size());
+        list.clear();
+        assertEquals(0, list.size());
     }
 
     @Test
     void containsEmpty() {
-        assertFalse(lst.contains(5));
-        assertFalse(lst.contains("abc"));
-        assertFalse(lst.contains(""));
+        assertFalse(list.contains(5));
+        assertFalse(list.contains("abc"));
+        assertFalse(list.contains(""));
     }
 
     @Test
     void containsExistingElements() {
-        lst.add(5);
-        lst.add(6);
-        assertTrue(lst.contains(5));
-        assertTrue(lst.contains(6));
+        list.add(5);
+        list.add(6);
+        assertTrue(list.contains(5));
+        assertTrue(list.contains(6));
     }
 
     @Test
     void containsMissingElements() {
-        lst.add(5);
-        lst.add(6);
-        assertFalse(lst.contains(7));
-        assertFalse(lst.contains("abc"));
+        list.add(5);
+        list.add(6);
+        assertFalse(list.contains(7));
+        assertFalse(list.contains("abc"));
     }
 
     @Test
     void getNegativeIndex() {
-        lst.add(1);
-        lst.add(2);
-        assertNull(lst.get(-1));
+        list.add(1);
+        list.add(2);
+        assertNull(list.get(-1));
     }
 
     @Test
     void getExistingIndex() {
-        lst.add(1);
-        lst.add("abc");
-        assertEquals(1, lst.get(0));
-        assertEquals("abc", lst.get(1));
+        list.add(1);
+        list.add("abc");
+        assertEquals(1, list.get(0));
+        assertEquals("abc", list.get(1));
     }
 
     @Test
     void getIndexOutOfBounds() {
         for (int i = 0; i < 10; i++) {
-            lst.add(i);
+            list.add(i);
         }
-        assertNull(lst.get(10));
+        assertNull(list.get(10));
     }
 
     @Test
     void indexOfEmptyList() {
-        assertEquals(-1, lst.indexOf("abc"));
-        assertEquals(-1, lst.indexOf(""));
+        assertEquals(-1, list.indexOf("abc"));
+        assertEquals(-1, list.indexOf(""));
     }
 
     @Test
     void indexOfExistingElement() {
-        lst.add(1);
-        lst.add("1");
-        assertEquals(0, lst.indexOf(1));
-        assertEquals(1, lst.indexOf("1"));
+        list.add(1);
+        list.add("1");
+        assertEquals(0, list.indexOf(1));
+        assertEquals(1, list.indexOf("1"));
     }
 
     @Test
     void indexOfMultipleOccurrences() {
         for (int i = 0; i < 5; i++) {
-            lst.add(1);
-            lst.add("1");
+            list.add(1);
+            list.add("1");
         }
-        assertEquals(0, lst.indexOf(1));
-        assertEquals(1, lst.indexOf("1"));
+        assertEquals(0, list.indexOf(1));
+        assertEquals(1, list.indexOf("1"));
     }
 
     @Test
     void addOneElement() {
-        lst.add(1);
-        assertEquals(1, lst.size());
-        assertEquals(0, lst.indexOf(1));
-        assertTrue(lst.contains(1));
+        list.add(1);
+        assertEquals(1, list.size());
+        assertEquals(0, list.indexOf(1));
+        assertTrue(list.contains(1));
     }
 
     @Test
     void addManyElements() {
         for (int i = 0; i < 10000; i++) {
-            lst.add(i);
-            lst.add(String.valueOf(i));
+            list.add(i);
+            list.add(String.valueOf(i));
         }
 
         for (int i = 0; i < 10000; i++) {
-            assertTrue(lst.contains(i));
-            assertTrue(lst.contains(String.valueOf(i)));
+            assertTrue(list.contains(i));
+            assertTrue(list.contains(String.valueOf(i)));
         }
 
-        assertEquals(20000, lst.size());
+        assertEquals(20000, list.size());
     }
 
     @Test
     void removeNegativeIndex() {
         for (int i = 0; i < 10; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.remove(-1);
-        assertEquals(10, lst.size());
+        list.remove(-1);
+        assertEquals(10, list.size());
     }
 
     @Test
     void removeIndexOutOfBounds() {
         for (int i = 0; i < 10; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.remove(10);
-        assertEquals(10, lst.size());
+        list.remove(10);
+        assertEquals(10, list.size());
     }
 
     @Test
     void removeExistingElement() {
         for (int i = 0; i < 10; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.remove(0);
-        lst.remove(5);
+        list.remove(0);
+        list.remove(5);
 
-        assertEquals(8, lst.size());
-        assertFalse(lst.contains("0"));
-        assertTrue(lst.contains("5"));
-        assertFalse(lst.contains("6"));
+        assertEquals(8, list.size());
+        assertFalse(list.contains("0"));
+        assertTrue(list.contains("5"));
+        assertFalse(list.contains("6"));
     }
 
     @Test
     void setIndexOutOfBounds() {
         for (int i = 0; i < 10; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.set(-1, "abc");
-        lst.set(10, "abc");
+        list.set(-1, "abc");
+        list.set(10, "abc");
 
         for (int i = 0; i < 10; i++) {
-            assertEquals(String.valueOf(i), lst.get(i));
+            assertEquals(String.valueOf(i), list.get(i));
         }
     }
 
     @Test
     void setExistingIndex() {
         for (int i = 0; i < 100; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.set(5, "100");
-        lst.set(10, "abc");
+        list.set(5, "100");
+        list.set(10, "abc");
 
-        assertEquals(5, lst.indexOf("100"));
-        assertEquals(10, lst.indexOf("abc"));
-        assertEquals(100, lst.size());
-        assertFalse(lst.contains("5"));
-        assertFalse(lst.contains("10"));
+        assertEquals(5, list.indexOf("100"));
+        assertEquals(10, list.indexOf("abc"));
+        assertEquals(100, list.size());
+        assertFalse(list.contains("5"));
+        assertFalse(list.contains("10"));
     }
 
     @Test
     void clearFewElements() {
         for (int i = 0; i < 200; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.clear();
-        assertEquals(0, lst.size());
+        list.clear();
+        assertEquals(0, list.size());
     }
 
     @Test
         //for time purposes only
     void clearManyElements() {
         for (int i = 0; i < 10000000; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        lst.clear();
-        assertEquals(0, lst.size());
-        assertFalse(lst.contains("10000"));
-        assertEquals(-1, lst.indexOf("5"));
+        list.clear();
+        assertEquals(0, list.size());
+        assertFalse(list.contains("10000"));
+        assertEquals(-1, list.indexOf("5"));
     }
 
     @Test
     void emptyEmptyList() {
-        assertTrue(lst.isEmpty());
+        assertTrue(list.isEmpty());
     }
 
     @Test
     void emptyNonEmptyList() {
         for (int i = 0; i < 5; i++) {
-            lst.add(lst);
+            list.add(list);
         }
 
-        assertFalse(lst.isEmpty());
+        assertFalse(list.isEmpty());
     }
 
     @Test
     void emptyAfterClear() {
-        assertTrue(lst.isEmpty());
+        assertTrue(list.isEmpty());
 
         for (int i = 0; i < 5; i++) {
-            lst.add(String.valueOf(i));
+            list.add(String.valueOf(i));
         }
 
-        assertFalse(lst.isEmpty());
+        assertFalse(list.isEmpty());
 
-        lst.clear();
-        assertTrue(lst.isEmpty());
-        assertEquals(0, lst.size());
+        list.clear();
+        assertTrue(list.isEmpty());
+        assertEquals(0, list.size());
     }
 
     @Test
     void toArrayEmptyList() {
-        Object[] a = new Object[0];
-        assertArrayEquals(a, lst.toArray());
+        Object[] emptyArray = new Object[0];
+        assertArrayEquals(emptyArray, list.toArray());
     }
 
     @Test
     void toArrayNonEmptyList() {
-        Object[] a = new Object[5];
+        Object[] array = new Object[5];
         for(int i = 0; i < 5; i++) {
-            a[i] = String.valueOf(i);
-            lst.add(String.valueOf(i));
+            array[i] = String.valueOf(i);
+            list.add(String.valueOf(i));
         }
 
-        assertArrayEquals(a, lst.toArray());
+        assertArrayEquals(array, list.toArray());
     }
 
     @Test
     void toArrayAfterRemoval() {
         for(int i = 0; i < 5; i++) {
-            lst.add(String.valueOf(i)); 
+            list.add(String.valueOf(i));
         }
-        lst.remove(3);
-        lst.remove(1);
+        list.remove(3);
+        list.remove(1);
 
-        Object[] a = new Object[3];
+        Object[] array = new Object[3];
         for(int i = 0; i < 3; i++) {
-            a[i] = String.valueOf(i * 2);
+            array[i] = String.valueOf(i * 2);
         }
 
-        assertArrayEquals(a, lst.toArray());
+        assertArrayEquals(array, list.toArray());
     }
 }
