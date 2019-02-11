@@ -60,14 +60,14 @@ public class HashTable {
                 continue;
             }
 
-            Object[] curBox = list.toArray();
-            for (Object obj : curBox) {
-                Data elem = (Data) obj;
-                int hash = getHash(elem.key, capacity);
+            Object[] currentBox = list.toArray();
+            for (Object object : currentBox) {
+                Data element = (Data) object;
+                int hash = getHash(element.key, capacity);
 
                 if (newTable[hash] == null)
                     newTable[hash] = new LinkedList();
-                newTable[hash].add(elem);
+                newTable[hash].add(element);
             }
         }
         table = newTable;
@@ -104,11 +104,11 @@ public class HashTable {
         }
 
         int index = table[hash].indexOf(new Data(key, null));
-        String res = null;
+        String result = null;
         if (index != -1) {
-            res = ((Data) table[hash].get(index)).value;
+            result = ((Data) table[hash].get(index)).value;
         }
-        return res;
+        return result;
     }
 
     /**
@@ -126,16 +126,16 @@ public class HashTable {
         }
 
         int index = table[hash].indexOf(new Data(key, null));
-        String res = null;
+        String result = null;
         if (index == -1) {
             size++;
             table[hash].add(new Data(key, value));
         } else {
-            res = ((Data) table[hash].get(index)).value;
+            result = ((Data) table[hash].get(index)).value;
             table[hash].set(index, new Data(key, value));
         }
 
-        return res;
+        return result;
     }
 
     /**
@@ -148,15 +148,15 @@ public class HashTable {
         if (table[hash] == null)
             return null;
 
-        String res = null;
+        String result = null;
         int index = table[hash].indexOf(new Data(key, null));
         if (index != -1) {
             size--;
-            res = ((Data) table[hash].get(index)).value;
+            result = ((Data) table[hash].get(index)).value;
             table[hash].remove(index);
         }
 
-        return res;
+        return result;
     }
 
     /** Clears this table, so that it contains no keys */
@@ -201,8 +201,8 @@ public class HashTable {
             if (!(other instanceof Data))
                 return false;
 
-            Data otherObj = (Data) other;
-            return key.equals(otherObj.key);
+            Data otherData = (Data) other;
+            return key.equals(otherData.key);
         }
 
         /**
