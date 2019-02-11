@@ -97,13 +97,13 @@ public class LinkedList {
         }
 
         if (node.next != null) {
-            node.next.prev = node.prev;
+            node.next.previous = node.previous;
         } else {
-            end = node.prev;
+            end = node.previous;
         }
 
-        if (node.prev != null) {
-            node.prev.next = node.next;
+        if (node.previous != null) {
+            node.previous.next = node.next;
         } else {
             begin = node.next;
         }
@@ -143,16 +143,16 @@ public class LinkedList {
      * @return an array containing all the elements of the list in the proper order (from first to last element)
      */
     public Object[] toArray() {
-        Object[] arrFromList = new Object[size];
+        Object[] arrayFromList = new Object[size];
 
         Node node = begin;
         int index = 0;
         while (node != null) {
-            arrFromList[index++] = node.data;
+            arrayFromList[index++] = node.data;
             node = node.next;
         }
 
-        return arrFromList;
+        return arrayFromList;
     }
 
     /**
@@ -177,20 +177,20 @@ public class LinkedList {
     /** Class for storing nodes of the list. */
     private class Node {
         /** Stores the previous node. This field is <code>null</code> if there is no such node. */
-        private Node prev;
+        private Node previous;
         /** Stores the next node. This field is <code>null</code> if there is no such node. */
         private Node next;
         /** Stores the data of the node. */
         private @NotNull Object data;
 
         /**
-         * Constructs an instance of <code>Node</code> with specified <code>prev</code>, <code>next</code> and <code>data</code>
-         * @param prev the previous node
+         * Constructs an instance of <code>Node</code> with specified <code>previous</code>, <code>next</code> and <code>data</code>
+         * @param previous the previous node
          * @param next the next node
          * @param data the stored data, mustn't be <code>null</code>
          */
-        private Node(Node prev, Node next, @NotNull Object data) {
-            this.prev = prev;
+        private Node(Node previous, Node next, @NotNull Object data) {
+            this.previous = previous;
             this.next = next;
             this.data = data;
         }
