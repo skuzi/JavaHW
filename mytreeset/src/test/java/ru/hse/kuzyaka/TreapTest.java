@@ -66,6 +66,9 @@ class TreapTest {
         assertEquals(Integer.valueOf(4), descendingSet.higher(5));
         assertEquals(Integer.valueOf(9), descendingSet.first());
         assertArrayEquals(numbers.toArray(), numbers.descendingSet().descendingSet().toArray());
+
+        assertTrue(numbers.remove(5));
+        assertFalse(descendingSet.contains(5));
     }
 
     @Test
