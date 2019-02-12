@@ -1,13 +1,13 @@
 package ru.hse.kuzyaka;
 
 import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private Data data;
     private Treap<E> descendingSet;
     private Comparator<? super E> comparator;
-
     private boolean isDescending;
 
     @SuppressWarnings("unchecked")
@@ -69,7 +69,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
     public E lower(@NotNull E e) {
         Node node = data.root;
         Node lastFitting = null;
-        while(node != null) {
+        while (node != null) {
             node.regulate(isDescending);
             if (comparator.compare(node.value, e) >= 0) {
                 node = node.left;
@@ -102,7 +102,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public boolean add(E e) {
-        if(contains(e)){
+        if (contains(e)) {
             return false;
         } else {
             var nodePair = split(data.root, e);
@@ -113,46 +113,33 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private class TreapIterator implements Iterator<E> {
-        private Node pointer;
-
-        private TreapIterator() {
-            pointer = data.root;
-            if (pointer != null) {
-                pointer.regulate(isDescending);
-            }
-            while (pointer != null && pointer.left != null) {
-                pointer = pointer.left;
-                pointer.regulate(isDescending);
-            }
+    @Override
+    public boolean remove(Object o) {
+        E e = (E) o;
+        if (!contains(e)) {
+            return false;
         }
-
-        @Override
-        public boolean hasNext() {
-            return pointer != null;
+        var splitLess = split(data.root, e);
+        E higher = higher(e);
+        if (higher == null) {
+            data.root = splitLess.left;
+        } else {
+            var splitGreater = split(splitLess.right, higher(e));
+            data.root = merge(new NodePair(splitLess.left, splitGreater.right));
         }
-
-        @Override
-        public E next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            Node prev = pointer;
-            pointer = getNext(pointer);
-            return prev.value;
-        }
-
+        return true;
     }
 
     @Override
     public boolean contains(Object o) {
+        E e = (E) o;
         Node node = data.root;
-        while(node != null) {
+        while (node != null) {
             node.regulate(isDescending);
-            if(comparator.compare(node.value, (E) o) == 0) {
+            if (comparator.compare(node.value, e) == 0) {
                 return true;
             }
-            if(comparator.compare(node.value, (E) o) < 0) {
+            if (comparator.compare(node.value, e) < 0) {
                 node = node.right;
             } else {
                 node = node.left;
@@ -163,16 +150,16 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private Node getNext(@NotNull Node node) {
         node.regulate(isDescending);
-        if(node.right != null) {
+        if (node.right != null) {
             node = node.right;
             node.regulate(isDescending);
-            while(node.left != null) {
+            while (node.left != null) {
                 node = node.left;
                 node.regulate(isDescending);
             }
             return node;
         } else {
-            while(node.direction.equals(Direction.RIGHT)) {
+            while (node.direction.equals(Direction.RIGHT)) {
                 node = node.ancestor;
                 node.regulate(isDescending);
             }
@@ -208,16 +195,16 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private NodePair split(Node node, E e) {
-        if(node == null) {
+    private NodePair split(Node node, @NotNull E e) {
+        if (node == null) {
             return new NodePair(null, null);
         }
 
         node.regulate(isDescending);
-        if(comparator.compare(node.value, e) < 0) {
+        if (comparator.compare(node.value, e) < 0) {
             var split = split(node.right, e);
             node.right = split.left;
-            if(node.right != null) {
+            if (node.right != null) {
                 node.right.direction = Direction.RIGHT;
                 node.right.ancestor = node;
             }
@@ -227,13 +214,61 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         } else {
             var split = split(node.left, e);
             node.left = split.right;
-            if(node.left != null) {
+            if (node.left != null) {
                 node.left.direction = Direction.LEFT;
                 node.left.ancestor = node;
             }
             node.direction = Direction.ROOT;
             node.update();
             return new NodePair(split.left, node);
+        }
+    }
+
+    private int size(Node node) {
+        return node == null ? 0 : node.size;
+    }
+
+    private Direction toggle(Direction s) {
+        if (s.equals(Direction.RIGHT)) {
+            return Direction.LEFT;
+        }
+        if (s.equals(Direction.LEFT)) {
+            return Direction.RIGHT;
+        }
+        return Direction.ROOT;
+    }
+
+    private enum Direction {
+        LEFT, RIGHT, ROOT
+    }
+
+    private class TreapIterator implements Iterator<E> {
+        private Node pointer;
+
+        private TreapIterator() {
+            pointer = data.root;
+            if (pointer != null) {
+                pointer.regulate(isDescending);
+            }
+            while (pointer != null && pointer.left != null) {
+                pointer = pointer.left;
+                pointer.regulate(isDescending);
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return pointer != null;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Node prev = pointer;
+            pointer = getNext(pointer);
+            return prev.value;
         }
     }
 
@@ -246,10 +281,6 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         private int size;
         private Direction direction;
         private boolean isReversed;
-
-        private Node() {
-            this(null);
-        }
 
         private Node(E value) {
             this(value, null, null, Direction.ROOT, null);
@@ -266,15 +297,15 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
 
         private void regulate(boolean isReversed) {
-            if(this.isReversed != isReversed) {
+            if (this.isReversed != isReversed) {
                 var tmp = left;
                 left = right;
                 right = tmp;
 
-                if(left != null) {
+                if (left != null) {
                     left.direction = toggle(left.direction);
                 }
-                if(right != null) {
+                if (right != null) {
                     right.direction = toggle(right.direction);
                 }
                 this.isReversed = isReversed;
@@ -287,10 +318,6 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
-    private int size(Node node) {
-        return node == null ? 0 : node.size;
-    }
-
     private class NodePair {
         private Node left;
         private Node right;
@@ -299,20 +326,6 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
             this.left = left;
             this.right = right;
         }
-    }
-
-    private enum Direction {
-        LEFT, RIGHT, ROOT
-    }
-
-    private Direction toggle(Direction s) {
-        if(s.equals(Direction.RIGHT)) {
-            return Direction.LEFT;
-        }
-        if(s.equals(Direction.LEFT)) {
-            return Direction.RIGHT;
-        }
-        return Direction.ROOT;
     }
 
     private class Data {
