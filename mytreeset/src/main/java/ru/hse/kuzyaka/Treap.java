@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 /**
- * A {@link MyTreeSet} implementation using binary search tree (i.e. treap).
+ * A {@link MyTreeSet} implementation using balanced binary search tree (i.e. treap).
  * Note that any comparator passed to this tree must be consistent with {@code equals}.
  * @param <E> the type of the elements maintained by this set
  */
