@@ -4,10 +4,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
-    private Node root;
+    private Data data;
     private Treap<E> descendingSet;
     private Comparator<? super E> comparator;
-    private Random random;
+
     private boolean isDescending;
 
     @SuppressWarnings("unchecked")
@@ -16,18 +16,15 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
     }
 
     public Treap(Comparator<? super E> comparator) {
-        root = new Node();
+        data = new Data();
         this.comparator = comparator;
-        random = new Random(239);
         isDescending = false;
-        descendingSet = new Treap<>(comparator.reversed(), root, random, this, true);
+        descendingSet = new Treap<>(comparator.reversed(), data, this, true);
     }
 
-    private Treap(Comparator<? super E> comparator, Node root, Random random, Treap<E> twinSet, boolean isDescending) {
+    private Treap(Comparator<? super E> comparator, Data data, Treap<E> twinSet, boolean isDescending) {
         this.comparator = comparator;
-        this.root = root;
-        this.random = new Random(239);
-        this.random = random;
+        this.data = data;
         this.descendingSet = twinSet;
         this.isDescending = isDescending;
     }
@@ -40,7 +37,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public int size() {
-        return root != null ? root.size : 0;
+        return data.root != null ? data.root.size : 0;
     }
 
     @Override
@@ -70,20 +67,26 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public E lower(@NotNull E e) {
-        if (root == null) {
-            return null;
+        Node node = data.root;
+        Node lastFitting = null;
+        while(node != null) {
+            node.regulate(isDescending);
+            if (comparator.compare(node.value, e) >= 0) {
+                node = node.left;
+            } else {
+                lastFitting = node;
+                node = node.right;
+            }
         }
-        return root.lower(e);
+        return lastFitting != null ? lastFitting.value : null;
     }
 
     @Override
     public E floor(@NotNull E e) {
-        if (root == null) {
-            return null;
-        } else if (root.contains(e)) {
+        if (contains(e)) {
             return e;
         } else {
-            return root.lower(e);
+            return lower(e);
         }
     }
 
@@ -99,17 +102,13 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     @Override
     public boolean add(E e) {
-        if(root == null) {
-            root = new Node(e);
-            root.update();
-            return true;
-        } else if(root.contains(e)){
+        if(contains(e)){
             return false;
         } else {
-            var nodePair = split(root, e);
+            var nodePair = split(data.root, e);
             var newLeft = merge(new NodePair(nodePair.left, new Node(e)));
             var newRight = nodePair.right;
-            root = merge(new NodePair(newLeft, newRight));
+            data.root = merge(new NodePair(newLeft, newRight));
             return true;
         }
     }
@@ -118,7 +117,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         private Node pointer;
 
         private TreapIterator() {
-            pointer = root;
+            pointer = data.root;
             if (pointer != null) {
                 pointer.regulate(isDescending);
             }
@@ -143,6 +142,23 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
             return prev.value;
         }
 
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        Node node = data.root;
+        while(node != null) {
+            node.regulate(isDescending);
+            if(comparator.compare(node.value, (E) o) == 0) {
+                return true;
+            }
+            if(comparator.compare(node.value, (E) o) < 0) {
+                node = node.right;
+            } else {
+                node = node.left;
+            }
+        }
+        return false;
     }
 
     private Node getNext(@NotNull Node node) {
@@ -246,7 +262,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
             this.direction = direction;
             this.ancestor = ancestor;
             this.size = size(left) + size(right) + 1;
-            priority = random.nextInt();
+            priority = data.random.nextInt();
         }
 
         private void regulate(boolean isReversed) {
@@ -255,8 +271,12 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
                 left = right;
                 right = tmp;
 
-                left.direction = toggle(left.direction);
-                right.direction = toggle(right.direction);
+                if(left != null) {
+                    left.direction = toggle(left.direction);
+                }
+                if(right != null) {
+                    right.direction = toggle(right.direction);
+                }
                 this.isReversed = isReversed;
             }
 
@@ -264,43 +284,6 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         private void update() {
             size = size(left) + size(right) + 1;
-        }
-
-        private E lower(@NotNull E e) {
-            regulate(isDescending);
-            if(comparator.compare(value, e) < 0) {
-                if(right == null) {
-                    return value;
-                } else {
-                    return right.lower(e);
-                }
-            } else {
-                if(left != null) {
-                    return left.lower(e);
-                } else {
-                    return null;
-                }
-            }
-        }
-
-        private boolean contains(@NotNull E e) {
-            regulate(isDescending);
-            if(comparator.compare(value, e) == 0) {
-                return true;
-            }
-            if(comparator.compare(value, e) < 0) {
-                if(right == null) {
-                    return false;
-                } else {
-                    return right.contains(e);
-                }
-            } else {
-                if(left == null) {
-                    return false;
-                } else {
-                    return left.contains(e);
-                }
-            }
         }
     }
 
@@ -330,5 +313,10 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
             return Direction.RIGHT;
         }
         return Direction.ROOT;
+    }
+
+    private class Data {
+        private Node root = null;
+        private Random random = new Random(239);
     }
 }
