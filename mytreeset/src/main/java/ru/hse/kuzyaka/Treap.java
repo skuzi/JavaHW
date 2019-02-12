@@ -4,17 +4,29 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+/**
+ * A {@link MyTreeSet} implementation using binary search tree (i.e. treap).
+ * Note that any comparator passed to this tree must be consistent with {@code equals}.
+ * @param <E> the type of the elements maintained by this set
+ */
 public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private Data data;
     private Treap<E> descendingSet;
     private Comparator<? super E> comparator;
     private boolean isDescending;
 
+    /**
+     * Constructs a new, empty treap according to the natural ordering of the elements
+     */
     @SuppressWarnings("unchecked")
     public Treap() {
         this((Comparator<? super E>) Comparator.naturalOrder());
     }
 
+    /**
+     * Constructs a new, empty treap using given comparator.
+     * @param comparator
+     */
     public Treap(Comparator<? super E> comparator) {
         data = new Data();
         this.comparator = comparator;
@@ -29,27 +41,48 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         this.isDescending = isDescending;
     }
 
-    @NotNull
+    /**
+     * Returns an iterator over the elements in the set.
+     * @return an iterator over the elements in the set
+     */
     @Override
+    @NotNull
     public Iterator<E> iterator() {
         return new TreapIterator();
     }
 
+    /**
+     * Returns the number of stored values.
+     * @return the number of stored values
+     */
     @Override
     public int size() {
         return data.root != null ? data.root.size : 0;
     }
 
+    /**
+     * Returns an iterator over the elements in descending order. Equivalent to {@code descendingSet().iterator()}
+     * @return an iterator over the elements in descending order.
+     */
     @Override
     public Iterator<E> descendingIterator() {
         return descendingSet.iterator();
     }
 
+    /**
+     * Returns a reverse order view of the elements in the set. All changes done to the original set are reflected in this set.
+     * @return reverse order view of the elements in the set.
+     */
     @Override
     public MyTreeSet<E> descendingSet() {
         return descendingSet;
     }
 
+    /**
+     * Returns the first(least) element of the set.
+     * @return first element of the set
+     * @throws NoSuchElementException if the set is empty
+     */
     @Override
     public E first() {
         var iterator = iterator();
@@ -60,11 +93,22 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
+    /**
+     * Returns the last(greatest) element of the set.
+     * @return last element of the set
+     * @throws NoSuchElementException if the set is empty
+     */
     @Override
     public E last() {
         return descendingSet.first();
     }
 
+    /**
+     * Return the greatest of all elements in the set strictly less than the given
+     * @param e the value to match
+     * @return the greatest element strictly less than the given, or {@code null} if there were no such
+     * @throws ClassCastException if the specified element can't be compared with the elements in the set
+     */
     @Override
     public E lower(@NotNull E e) {
         Node node = data.root;
@@ -82,6 +126,12 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return lastFitting != null ? lastFitting.value : null;
     }
 
+    /**
+     * Return the greatest of all elements in the set less than or equal to the given
+     * @param e the value to match
+     * @return the greatest element less than or equal to the given, or {@code null} if there were no such
+     * @throws ClassCastException if the specified element can't be compared with the elements in the set
+     */
     @Override
     public E floor(@NotNull E e) {
         if (contains(e)) {
@@ -91,16 +141,33 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
+    /**
+     * Return the least of all elements in the set greater than or equal to the given
+     * @param e the value to match
+     * @return the least element greater than or equal to the given, or {@code null} if there were no such
+     * @throws ClassCastException if the specified element can't be compared with the elements in the set
+     */
     @Override
     public E ceiling(@NotNull E e) {
         return descendingSet.floor(e);
     }
 
+    /**
+     * Returns the least of all elements in the set strictly greater than given
+     * @param e the value to match
+     * @return the least element greater than {@code e}, or {@code null} if there were no such
+     * @throws ClassCastException if the specified element can't be compared with the elements in the set
+     */
     @Override
     public E higher(@NotNull E e) {
         return descendingSet.lower(e);
     }
 
+    /**
+     * Tries to add element to the set
+     * @param e element to add
+     * @return {@code true} if the element was actually added; {@code false} otherwise
+     */
     @Override
     public boolean add(E e) {
         if (contains(e)) {
@@ -116,6 +183,11 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         }
     }
 
+    /**
+     * Removes object, equal to following, from the set
+     * @param o object to remove
+     * @return {@code true} if the object was actually removed; {@code false} otherwise
+     */
     @Override
     public boolean remove(Object o) {
         E e = (E) o;
@@ -133,6 +205,11 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         return true;
     }
 
+    /**
+     * Checks if the set contains the following object
+     * @param o object to look for
+     * @return {@code true} or {@code false} whether the set contains this object or not
+     */
     @Override
     public boolean contains(Object o) {
         E e = (E) o;
