@@ -71,6 +71,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
         Node lastFitting = null;
         while (node != null) {
             node.regulate(isDescending);
+
             if (comparator.compare(node.value, e) >= 0) {
                 node = node.left;
             } else {
@@ -106,8 +107,10 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
             return false;
         } else {
             var nodePair = split(data.root, e);
+
             var newLeft = merge(new NodePair(nodePair.left, new Node(e)));
             var newRight = nodePair.right;
+
             data.root = merge(new NodePair(newLeft, newRight));
             return true;
         }
