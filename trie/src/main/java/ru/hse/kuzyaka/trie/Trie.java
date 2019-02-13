@@ -7,14 +7,9 @@ import java.io.*;
 import java.util.HashMap;
 
 /** Data structure for storing set of strings. Basic operations have the complexity of O(|length|). */
-public class Trie {
+public class Trie implements Serializable {
     /** Root node which represents empty string. */
-    private TrieNode root;
-
-    /**Constructs empty trie with no strings added. */
-    public Trie() {
-        root = new TrieNode();
-    }
+    private TrieNode root = new TrieNode();
 
     /**
      * Returns the size of the trie (the number of stored strings)
@@ -28,7 +23,7 @@ public class Trie {
     /**
      * Checks if the given string is in this trie
      *
-     * @param element the string which is looked for; mustn't be <code>null</code>
+     * @param element the string which is looked for
      * @return <code>true</code> if the trie contains this string; <code>false</code> otherwise
      */
     public boolean contains(@NotNull String element) {
@@ -39,7 +34,7 @@ public class Trie {
     /**
      * Adds the given string to this trie if it wasn't already in it
      *
-     * @param element the string which is added, mustn't be <code>null</code>
+     * @param element the string which is added
      * @return <code>true</code> if adding was successful; <code>false</code> otherwise
      */
     public boolean add(@NotNull String element) {
@@ -57,7 +52,7 @@ public class Trie {
     /**
      * Removes the given string from this trie if the trie actually contains it
      *
-     * @param element the string which is removed, mustn't be <code>null</code>
+     * @param element the string which is removed
      * @return <code>true</code> if removal was successful; <code>false</code> otherwise
      */
     public boolean remove(@NotNull String element) {
@@ -78,7 +73,7 @@ public class Trie {
      * @param prefix the common prefix of all counted strings
      * @return the number of strings in this trie starting with the prefix
      */
-    int howManyStartsWithPrefix(@NotNull String prefix) {
+    public int howManyStartsWithPrefix(@NotNull String prefix) {
         var lastNode = root.moveWithoutAdd(prefix);
         if (lastNode.depth == prefix.length()) {
             return lastNode.terminalsInSubtree;
@@ -93,11 +88,10 @@ public class Trie {
      * @param out <code>OutputStream</code> to write trie to
      * @throws IOException
      */
-    void serialize(@NotNull OutputStream out) throws IOException {
+    public void serialize(@NotNull OutputStream out) throws IOException {
         var dataOut = new DataOutputStream(out);
         root.serializeSubtree(dataOut);
         dataOut.flush();
-        dataOut.close();
     }
 
     /**
@@ -106,40 +100,70 @@ public class Trie {
      * @param in <code>InputStream</code> to read from
      * @throws IOException
      */
-    void deserialize(@NotNull InputStream in) throws IOException {
+    public void deserialize(@NotNull InputStream in) throws IOException {
         var dataIn = new DataInputStream(in);
         root = new TrieNode();
         root.deserializeSubtree(dataIn);
-        in.close();
     }
 
-    /**Class representing nodes of the trie. */
+    /**
+     * Checks if this trie is equal to another object (other object must be instance of {@code Trie}).
+     * Equality of tries means that they contain the same set of strings, i.e.
+     * every string from first trie presents in second, and vice-versa
+     * @param o object to be compared with
+     * @return {@code true} if this tree is equal to other trie
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Trie)) {
+            return false;
+        }
+        var other = (Trie) o;
+        return subtreeEquals(root, other.root);
+    }
+
+    /**
+     * Returns hashcode of this trie (actually it is always 0)
+     * @return hashcode of this trie
+     */
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    private boolean subtreeEquals(TrieNode node1, TrieNode node2) {
+        if (node1 == null && node2 == null) {
+            return true;
+        } else if (node1 != null && node2 != null) {
+            boolean result = true;
+            result &= node1.isTerminal == node2.isTerminal;
+            result &= node1.depth == node2.depth;
+            result &= node1.terminalsInSubtree == node2.terminalsInSubtree;
+            result &= node1.next.size() == node2.next.size();
+            for(var entry : node1.next.entrySet()) {
+                if(!node2.next.containsKey(entry.getKey())) {
+                    return false;
+                }
+                result &= subtreeEquals(entry.getValue(), node2.next.get(entry.getKey()));
+            }
+            return result;
+        } else {
+            return false;
+        }
+    }
+
     private class TrieNode {
-        /** Tells, does any string end in this node. */
         private boolean isTerminal;
-        /** Number of characters on the path to the root. */
         private int depth;
-        /** Number of string ending in the subtree of this node. */
         private int terminalsInSubtree;
-        /** Map of transitions char-node from this node, excluding the parent node. */
         private HashMap<Character, TrieNode> next;
-        /** Reference to the parent node. */
         private @Nullable TrieNode parent;
-        /** Character on the edge to the parent. */
         private char lastOnPath;
 
-        /** Default constructor for nodes without parents (used only for root node)*/
         private TrieNode() {
             this(0, null, '\0');
         }
 
-        /**
-         * Constructs node with given depth, parent node and character on the edge to the parent
-         *
-         * @param depth depth value
-         * @param parent reference to parent
-         * @param lastOnPath character on the edge to the parent
-         */
         private TrieNode(int depth, @Nullable TrieNode parent, char lastOnPath) {
             this.depth = depth;
             this.parent = parent;
@@ -149,22 +173,10 @@ public class Trie {
             isTerminal = false;
         }
 
-        /**
-         * Checks if given character exists on some edge from this node, excluding edge to the parent
-         *
-         * @param c character which transition is looked for
-         * @return <code>true</code> if there is such transition; <code>false</code> otherwise
-         */
         private boolean hasNext(char c) {
             return next.containsKey(c);
         }
 
-        /**
-         * Adds the transition by the given character from this node if there was no such
-         *
-         * @param c character which transition is looked for
-         * @return node which represents the given char (if there was no such transition, new node is made)
-         */
         private TrieNode getNext(char c) {
             if (!hasNext(c)) {
                 next.put(c, new TrieNode(depth + 1, this, c));
@@ -172,12 +184,6 @@ public class Trie {
             return next.get(c);
         }
 
-        /**
-         * Looks for given string in the subtree of this node. New nodes are made if needed.
-         *
-         * @param element string to look for
-         * @return node representing given string in the subtree of this node.
-         */
         private TrieNode moveWithAdd(@NotNull String element) {
             var curNode = this;
             for (char c : element.toCharArray()) {
@@ -186,12 +192,6 @@ public class Trie {
             return curNode;
         }
 
-        /**
-         * Looks for given string in the subtree of this node. No new nodes are added.
-         *
-         * @param element string to look for
-         * @return node where the last existing transition ended
-         */
         private TrieNode moveWithoutAdd(@NotNull String element) {
             var curNode = this;
             for (char c : element.toCharArray()) {
@@ -202,8 +202,6 @@ public class Trie {
             return curNode;
         }
 
-        /** Makes this node not terminal (only if it was terminal).
-         * Recalculates all ancestors so that the trie remains valid. */
         private void makeNotTerminal() {
             isTerminal = false;
             terminalsInSubtree--;
@@ -222,8 +220,6 @@ public class Trie {
             }
         }
 
-        /** Makes this node terminal (only if it was not terminal).
-         * Recalculates all ancestors so that the trie remains valid. */
         private void makeTerminal() {
             isTerminal = true;
 
@@ -234,12 +230,6 @@ public class Trie {
             }
         }
 
-        /**
-         * Writes the subtree of this node to the given <code>DataOutputStream</code> as a byte sequence
-         *
-         * @param out <code>DataOutputStream</code> to write to, mustn't be <code>null</code>
-         * @throws IOException
-         */
         private void serializeSubtree(@NotNull DataOutputStream out) throws IOException {
             out.writeBoolean(isTerminal);
             out.writeInt(terminalsInSubtree);
@@ -253,12 +243,6 @@ public class Trie {
             }
         }
 
-        /**
-         * Reads the subtree of this node from the given <code>DataInputStream</code>
-         * Any old data of this node is discarded.
-         * @param in <code>DataInputStream</code> to read from, mustn't be <code>null</code>
-         * @throws IOException
-         */
         private void deserializeSubtree(@NotNull DataInputStream in) throws IOException {
             isTerminal = in.readBoolean();
             terminalsInSubtree = in.readInt();
