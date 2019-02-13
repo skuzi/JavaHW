@@ -6,9 +6,13 @@ import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.HashMap;
 
-/** Data structure for storing set of strings. Basic operations have the complexity of O(|length|). */
+/**
+ * Data structure for storing set of strings. Basic operations have the complexity of O(|length|).
+ */
 public class Trie implements Serializable {
-    /** Root node which represents empty string. */
+    /**
+     * Root node which represents empty string.
+     */
     private TrieNode root = new TrieNode();
 
     /**
@@ -112,6 +116,7 @@ public class Trie implements Serializable {
      * Checks if this trie is equal to another object (other object must be instance of {@code Trie}).
      * Equality of tries means that they contain the same set of strings, i.e.
      * every string from first trie presents in second, and vice-versa
+     *
      * @param o object to be compared with
      * @return {@code true} if this tree is equal to other trie
      */
@@ -126,6 +131,7 @@ public class Trie implements Serializable {
 
     /**
      * Returns hashcode of this trie (actually it is always 0)
+     *
      * @return hashcode of this trie
      */
     @Override
@@ -142,8 +148,8 @@ public class Trie implements Serializable {
             result &= node1.depth == node2.depth;
             result &= node1.terminalsInSubtree == node2.terminalsInSubtree;
             result &= node1.next.size() == node2.next.size();
-            for(var entry : node1.next.entrySet()) {
-                if(!node2.next.containsKey(entry.getKey())) {
+            for (var entry : node1.next.entrySet()) {
+                if (!node2.next.containsKey(entry.getKey())) {
                     return false;
                 }
                 result &= subtreeEquals(entry.getValue(), node2.next.get(entry.getKey()));
