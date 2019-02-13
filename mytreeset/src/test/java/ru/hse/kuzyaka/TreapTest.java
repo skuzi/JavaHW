@@ -3,6 +3,7 @@ package ru.hse.kuzyaka;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -16,7 +17,7 @@ class TreapTest {
 
     private Treap<Integer> numbers(int n) {
         Treap<Integer> result = new Treap<>();
-        for(int i = 0; i < n; i++) {
+        for (int i = 0; i < n; i++) {
             result.add(i);
         }
         return result;
@@ -31,7 +32,7 @@ class TreapTest {
     @Test
     void iterator() {
         var iterator = numbers.iterator();
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             assertTrue(iterator.hasNext());
             assertEquals(Integer.valueOf(i), iterator.next());
         }
@@ -40,10 +41,35 @@ class TreapTest {
     }
 
     @Test
+    void iteratorInvalidatesAfterAdd() {
+        var iterator = numbers.iterator();
+        for (int i = 0; i < 5; i++) {
+            assertTrue(iterator.hasNext());
+            assertEquals(Integer.valueOf(i), iterator.next());
+        }
+        assertTrue(numbers.add(11));
+        assertThrows(ConcurrentModificationException.class, iterator::next);
+        assertThrows(ConcurrentModificationException.class, iterator::hasNext);
+    }
+
+    @Test
+    void iteratorDoesNotInvalidatesAfterUnsuccessfulAdd() {
+        var iterator = numbers.iterator();
+        for (int i = 0; i < 5; i++) {
+            assertTrue(iterator.hasNext());
+            assertEquals(Integer.valueOf(i), iterator.next());
+        }
+        assertFalse(numbers.add(3));
+        assertFalse(numbers.add(7));
+        assertDoesNotThrow(iterator::next);
+        assertDoesNotThrow(iterator::hasNext);
+    }
+
+    @Test
     void size() {
         assertEquals(0, emptyTreap.size());
         assertEquals(10, numbers.size());
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             assertTrue(numbers.remove(i));
             assertEquals(10 - i - 1, numbers.size());
         }
@@ -52,7 +78,7 @@ class TreapTest {
     @Test
     void descendingIterator() {
         var descendingIterator = numbers.descendingIterator();
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             assertTrue(descendingIterator.hasNext());
             assertEquals(Integer.valueOf(10 - i - 1), descendingIterator.next());
         }
@@ -61,14 +87,21 @@ class TreapTest {
     }
 
     @Test
-    void descendingSet() {
+    void descendingSetContainsSameValues() {
         var descendingSet = numbers.descendingSet();
         assertEquals(Integer.valueOf(4), descendingSet.higher(5));
         assertEquals(Integer.valueOf(9), descendingSet.first());
         assertArrayEquals(numbers.toArray(), numbers.descendingSet().descendingSet().toArray());
+    }
+
+    @Test
+    void descendingSetReflectsChanges() {
+        var descendingSet = numbers.descendingSet();
 
         assertTrue(numbers.remove(5));
         assertFalse(descendingSet.contains(5));
+        assertTrue(descendingSet.add(100));
+        assertTrue(numbers.contains(100));
     }
 
     @Test
@@ -91,7 +124,7 @@ class TreapTest {
     @Test
     void lower() {
         assertEquals(Integer.valueOf(9), numbers.lower(Integer.MAX_VALUE));
-        for(int i = 1; i < 10; i++) {
+        for (int i = 1; i < 10; i++) {
             assertEquals(Integer.valueOf(i - 1), numbers.lower(i));
         }
         assertNull(emptyTreap.lower(100));
@@ -99,10 +132,10 @@ class TreapTest {
 
     @Test
     void floor() {
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             treap.add(2 * i);
         }
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             assertEquals(Integer.valueOf(2 * i), treap.floor(2 * i + 1));
         }
         assertNull(treap.ceiling(10));
@@ -111,10 +144,10 @@ class TreapTest {
 
     @Test
     void ceiling() {
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             treap.add(2 * i);
         }
-        for(int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             assertEquals(Integer.valueOf(2 * i), treap.ceiling(2 * i - 1));
         }
         assertNull(treap.ceiling(9));
