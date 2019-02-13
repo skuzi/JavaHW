@@ -27,7 +27,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
     /**
      * Constructs a new, empty treap using given comparator.
      *
-     * @param comparator
+     * @param comparator comparator used to compare elements
      */
     public Treap(Comparator<? super E> comparator) {
         this.comparator = comparator;
