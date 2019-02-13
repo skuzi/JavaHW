@@ -13,6 +13,7 @@ import java.util.*;
 public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private Node root = null;
     private Comparator<? super E> comparator;
+    private long version = 0;
     private Random random = new Random(239);
 
     /**
@@ -201,6 +202,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
             var newRight = nodePair.right;
 
             root = merge(new NodePair(newLeft, newRight));
+            version++;
             return true;
         }
     }
@@ -227,6 +229,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
             var splitGreater = split(splitLess.right, higher(e));
             root = merge(new NodePair(splitLess.left, splitGreater.right));
         }
+        version++;
         return true;
     }
 
@@ -348,9 +351,11 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private class TreapIterator implements Iterator<E> {
         private Node pointer;
+        private long version;
 
         private TreapIterator() {
             pointer = root;
+            version = Treap.this.version;
             while (pointer != null && pointer.left != null) {
                 pointer = pointer.left;
             }
@@ -363,6 +368,10 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public E next() {
+            if(version != Treap.this.version) {
+                throw new ConcurrentModificationException();
+            }
+
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
@@ -375,6 +384,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
     private class DescendingIterator extends TreapIterator {
         private Node pointer;
+        private long version;
 
         private DescendingIterator() {
             pointer = root;
@@ -390,6 +400,10 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public E next() {
+            if(version != Treap.this.version) {
+                throw new ConcurrentModificationException();
+            }
+
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
