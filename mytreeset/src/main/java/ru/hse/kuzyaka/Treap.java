@@ -368,7 +368,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public E next() {
-            if(version != Treap.this.version) {
+            if(this.version != Treap.this.version) {
                 throw new ConcurrentModificationException();
             }
 
@@ -388,6 +388,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         private DescendingIterator() {
             pointer = root;
+            version = Treap.this.version;
             while (pointer != null && pointer.right != null) {
                 pointer = pointer.right;
             }
@@ -400,7 +401,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public E next() {
-            if(version != Treap.this.version) {
+            if(this.version != Treap.this.version) {
                 throw new ConcurrentModificationException();
             }
 
