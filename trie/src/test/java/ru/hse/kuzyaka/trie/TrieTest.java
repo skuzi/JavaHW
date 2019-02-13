@@ -5,12 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrieTest {
-
-    Trie trie;
+    private Trie trie;
 
     @BeforeEach
     void setUp() {
@@ -54,10 +55,9 @@ class TrieTest {
         }
 
         assertEquals(100, trie.size());
-        assertTrue(trie.contains(String.valueOf(50)));
-        assertTrue(trie.contains(String.valueOf(20)));
-        assertFalse(trie.contains(String.valueOf(100)));
-
+        for (int i = 0; i < 100; i++) {
+            assertTrue(trie.contains(String.valueOf(i)));
+        }
         for (int i = 10; i < 20; i++) {
             assertFalse(trie.add(String.valueOf(i)));
         }
@@ -148,7 +148,7 @@ class TrieTest {
 
     @Test
     void howManyStartsWithPrefix() {
-        String words[] = {"a", "abacaba", "abcabc", "bc", "abcbac", "adbcc", "abac", "acc"};
+        String[] words = {"a", "abacaba", "abcabc", "bc", "abcbac", "adbcc", "abac", "acc"};
         for (String word : words) {
             trie.add(word);
         }
@@ -174,11 +174,7 @@ class TrieTest {
 
         moveData(trie, getter);
 
-        for (int i = 0; i < 10; i++) {
-            assertTrue(getter.contains(String.valueOf(i)));
-        }
-
-        assertEquals(trie.size(), getter.size());
+        assertEquals(trie, getter);
     }
 
     @Test
@@ -198,12 +194,11 @@ class TrieTest {
             assertFalse(getter.contains(String.valueOf(i)));
         }
 
-        assertEquals(trie.size(), getter.size());
+        assertEquals(trie, getter);
     }
 
     @Test
     void serializeEmpty() {
-
         Trie getter = new Trie();
         for (int i = 0; i < 20; i++) {
             getter.add(String.valueOf(i));
@@ -217,10 +212,67 @@ class TrieTest {
         assertEquals(0, getter.size());
     }
 
+    @Test
+    void serializeProtocolTest() {
+        var expected = new ByteArrayOutputStream();
+        var actual = new ByteArrayOutputStream();
+        assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
+
+        trie.add("a");
+        trie.add("ab");
+        trie.add("ac");
+        trie.add("b");
+
+        assertDoesNotThrow(() -> trie.serialize(actual));
+
+        assertArrayEquals(expected.toByteArray(), actual.toByteArray());
+    }
+
+    @Test
+    void deserializeProtocolTest() {
+        var expected = new ByteArrayOutputStream();
+        assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
+
+        var expectedTrie = new Trie();
+        expectedTrie.add("a");
+        expectedTrie.add("ab");
+        expectedTrie.add("b");
+        expectedTrie.add("ac");
+
+        assertDoesNotThrow(() -> trie.deserialize(new ByteArrayInputStream(expected.toByteArray())));
+
+        assertEquals(expectedTrie, trie);
+    }
+
     void moveData(Trie from, Trie to) {
         var out = new ByteArrayOutputStream();
         assertDoesNotThrow(() -> from.serialize(out));
         var in = new ByteArrayInputStream(out.toByteArray());
         assertDoesNotThrow(() -> to.deserialize(in));
+    }
+
+    void simpleTrieToByteArray(ByteArrayOutputStream out) throws IOException {
+        var dataOut = new DataOutputStream(out);
+        printNode(dataOut, false, 4, 0, '\0', 2);
+
+        dataOut.writeChar('a');
+        printNode(dataOut, true, 3, 1, 'a', 2);
+
+        dataOut.writeChar('b');
+        printNode(dataOut, true, 1, 2, 'b', 0);
+
+        dataOut.writeChar('c');
+        printNode(dataOut, true, 1, 2, 'c', 0);
+
+        dataOut.writeChar('b');
+        printNode(dataOut, true, 1, 1, 'b', 0);
+    }
+
+    void printNode(DataOutputStream out, boolean isTerminal, int terminalsInSubtree, int depth, char lastOnPath, int nextSize) throws IOException {
+        out.writeBoolean(isTerminal);
+        out.writeInt(terminalsInSubtree);
+        out.writeInt(depth);
+        out.writeChar(lastOnPath);
+        out.writeInt(nextSize);
     }
 }
