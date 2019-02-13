@@ -363,6 +363,9 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public boolean hasNext() {
+            if(this.version != Treap.this.version) {
+                throw new ConcurrentModificationException();
+            }
             return pointer != null;
         }
 
@@ -396,6 +399,9 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public boolean hasNext() {
+            if(this.version != Treap.this.version) {
+                throw new ConcurrentModificationException();
+            }
             return pointer != null;
         }
 
