@@ -88,6 +88,7 @@ public class Trie implements Serializable {
      * @param out <code>OutputStream</code> to write trie to
      * @throws IOException
      */
+    @Override
     public void serialize(@NotNull OutputStream out) throws IOException {
         var dataOut = new DataOutputStream(out);
         root.serializeSubtree(dataOut);
@@ -100,6 +101,7 @@ public class Trie implements Serializable {
      * @param in <code>InputStream</code> to read from
      * @throws IOException
      */
+    @Override
     public void deserialize(@NotNull InputStream in) throws IOException {
         var dataIn = new DataInputStream(in);
         root = new TrieNode();
