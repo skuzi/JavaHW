@@ -10,9 +10,7 @@ import java.util.HashMap;
  * Data structure for storing set of strings. Basic operations have the complexity of O(|length|).
  */
 public class Trie implements Serializable {
-    /**
-     * Root node which represents empty string.
-     */
+    /** Root node which represents empty string. */
     private TrieNode root = new TrieNode();
 
     /**
