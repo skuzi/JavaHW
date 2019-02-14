@@ -1,4 +1,4 @@
-package ru.hse.kuzyaka;
+package ru.hse.kuzyaka.mytreeset;
 
 import org.jetbrains.annotations.NotNull;
 

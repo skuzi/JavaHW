@@ -1,10 +1,9 @@
-package ru.hse.kuzyaka;
+package ru.hse.kuzyaka.mytreeset;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ConcurrentModificationException;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;

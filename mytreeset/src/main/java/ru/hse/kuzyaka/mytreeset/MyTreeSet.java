@@ -1,4 +1,4 @@
-package ru.hse.kuzyaka;
+package ru.hse.kuzyaka.mytreeset;
 
 import java.util.Iterator;
 import java.util.Set;
