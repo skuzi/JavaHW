@@ -244,6 +244,27 @@ class TrieTest {
         assertEquals(expectedTrie, trie);
     }
 
+    @Test
+    void equalsSimple() {
+        var otherTrie = new Trie();
+        for(int i = 0; i < 5; i++) {
+            trie.add(String.valueOf(i));
+            otherTrie.add(String.valueOf(i));
+        }
+        assertEquals(trie, otherTrie);
+    }
+
+    @Test
+    void notEquals() {
+        var otherTrie = new Trie();
+        for(int i = 0; i < 5; i++) {
+            trie.add(String.valueOf(i));
+            otherTrie.add(String.valueOf(i));
+        }
+        otherTrie.remove("3");
+        assertNotEquals(trie, otherTrie);
+    }
+
     void moveData(Trie from, Trie to) {
         var out = new ByteArrayOutputStream();
         assertDoesNotThrow(() -> from.serialize(out));
