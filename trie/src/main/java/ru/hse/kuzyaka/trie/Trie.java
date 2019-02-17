@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Objects;
 
 /**
  * Data structure for storing set of strings. Basic operations have the complexity of O(|length|).
@@ -20,6 +21,35 @@ public class Trie implements Serializable {
      */
     public int size() {
         return root.terminalsInSubtree;
+    }
+
+    /**
+     * Checks if this trie is equal to another object (other object must be instance of {@code Trie}).
+     * Equality of tries means that they contain the same set of strings, i.e.
+     * every string from first trie presents in second, and vice-versa
+     *
+     * @param o object to be compared with
+     * @return {@code true} if this tree is equal to other trie
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Trie trie = (Trie) o;
+        return Objects.equals(root, trie.root);
+    }
+
+    /**
+     * Returns hashcode of this trie
+     * @return hashcode of this trie
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(root);
     }
 
     /**
@@ -108,54 +138,6 @@ public class Trie implements Serializable {
         var dataIn = new DataInputStream(in);
         root = new TrieNode();
         root.deserializeSubtree(dataIn);
-    }
-
-    /**
-     * Checks if this trie is equal to another object (other object must be instance of {@code Trie}).
-     * Equality of tries means that they contain the same set of strings, i.e.
-     * every string from first trie presents in second, and vice-versa
-     *
-     * @param o object to be compared with
-     * @return {@code true} if this tree is equal to other trie
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Trie)) {
-            return false;
-        }
-        var other = (Trie) o;
-        return subtreeEquals(root, other.root);
-    }
-
-    /**
-     * Returns hashcode of this trie (actually it is always 0)
-     *
-     * @return hashcode of this trie
-     */
-    @Override
-    public int hashCode() {
-        return 0;
-    }
-
-    private boolean subtreeEquals(TrieNode node1, TrieNode node2) {
-        if (node1 == null && node2 == null) {
-            return true;
-        } else if (node1 != null && node2 != null) {
-            boolean result = true;
-            result &= node1.isTerminal == node2.isTerminal;
-            result &= node1.depth == node2.depth;
-            result &= node1.terminalsInSubtree == node2.terminalsInSubtree;
-            result &= node1.next.size() == node2.next.size();
-            for (var entry : node1.next.entrySet()) {
-                if (!node2.next.containsKey(entry.getKey())) {
-                    return false;
-                }
-                result &= subtreeEquals(entry.getValue(), node2.next.get(entry.getKey()));
-            }
-            return result;
-        } else {
-            return false;
-        }
     }
 
     private class TrieNode {
@@ -264,6 +246,27 @@ public class Trie implements Serializable {
                 next.put(edgeSymbol, child);
                 child.parent = this;
             }
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            TrieNode trieNode = (TrieNode) o;
+            return isTerminal == trieNode.isTerminal &&
+                    depth == trieNode.depth &&
+                    terminalsInSubtree == trieNode.terminalsInSubtree &&
+                    lastOnPath == trieNode.lastOnPath &&
+                    Objects.equals(next, trieNode.next);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(isTerminal, depth, terminalsInSubtree, next, lastOnPath);
         }
     }
 }
