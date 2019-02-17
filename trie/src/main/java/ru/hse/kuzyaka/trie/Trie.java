@@ -45,6 +45,7 @@ public class Trie implements Serializable {
 
     /**
      * Returns hashcode of this trie
+     * 
      * @return hashcode of this trie
      */
     @Override
