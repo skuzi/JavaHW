@@ -214,34 +214,42 @@ class TrieTest {
 
     @Test
     void serializeProtocolTest() {
-        var expected = new ByteArrayOutputStream();
-        var actual = new ByteArrayOutputStream();
-        assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
+        try (var actual = new ByteArrayOutputStream(); var expected = new ByteArrayOutputStream()) {
+            assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
 
-        trie.add("a");
-        trie.add("ab");
-        trie.add("ac");
-        trie.add("b");
+            trie.add("a");
+            trie.add("ab");
+            trie.add("ac");
+            trie.add("b");
 
-        assertDoesNotThrow(() -> trie.serialize(actual));
+            assertDoesNotThrow(() -> trie.serialize(actual));
 
-        assertArrayEquals(expected.toByteArray(), actual.toByteArray());
+            assertArrayEquals(expected.toByteArray(), actual.toByteArray());
+        } catch (IOException e) {
+            System.out.println("Something went wrong with serialization, probable reason is:");
+            e.printStackTrace();
+        }
     }
 
     @Test
     void deserializeProtocolTest() {
-        var expected = new ByteArrayOutputStream();
-        assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
+        Trie expectedTrie;
+        try (var expected = new ByteArrayOutputStream()) {
+            assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
 
-        var expectedTrie = new Trie();
-        expectedTrie.add("a");
-        expectedTrie.add("ab");
-        expectedTrie.add("b");
-        expectedTrie.add("ac");
+            expectedTrie = new Trie();
+            expectedTrie.add("a");
+            expectedTrie.add("ab");
+            expectedTrie.add("b");
+            expectedTrie.add("ac");
 
-        assertDoesNotThrow(() -> trie.deserialize(new ByteArrayInputStream(expected.toByteArray())));
+            assertDoesNotThrow(() -> trie.deserialize(new ByteArrayInputStream(expected.toByteArray())));
+            assertEquals(expectedTrie, trie);
+        } catch (IOException e) {
+            System.out.println("Something went wrong with deserialization, probable reason is:");
+            e.printStackTrace();
+        }
 
-        assertEquals(expectedTrie, trie);
     }
 
     @Test
@@ -266,27 +274,36 @@ class TrieTest {
     }
 
     void moveData(Trie from, Trie to) {
-        var out = new ByteArrayOutputStream();
-        assertDoesNotThrow(() -> from.serialize(out));
-        var in = new ByteArrayInputStream(out.toByteArray());
-        assertDoesNotThrow(() -> to.deserialize(in));
+        ByteArrayInputStream in;
+        try (var out = new ByteArrayOutputStream()) {
+            assertDoesNotThrow(() -> from.serialize(out));
+            in = new ByteArrayInputStream(out.toByteArray());
+            assertDoesNotThrow(() -> to.deserialize(in));
+        } catch (IOException e) {
+            System.out.println("Something went wrong with moving data, probable reason is:");
+            e.printStackTrace();
+        }
     }
 
-    void simpleTrieToByteArray(ByteArrayOutputStream out) throws IOException {
-        var dataOut = new DataOutputStream(out);
-        printNode(dataOut, false, 4, 0, '\0', 2);
+    void simpleTrieToByteArray(ByteArrayOutputStream out) {
+        try (var dataOut = new DataOutputStream(out)) {
+            printNode(dataOut, false, 4, 0, '\0', 2);
 
-        dataOut.writeChar('a');
-        printNode(dataOut, true, 3, 1, 'a', 2);
+            dataOut.writeChar('a');
+            printNode(dataOut, true, 3, 1, 'a', 2);
 
-        dataOut.writeChar('b');
-        printNode(dataOut, true, 1, 2, 'b', 0);
+            dataOut.writeChar('b');
+            printNode(dataOut, true, 1, 2, 'b', 0);
 
-        dataOut.writeChar('c');
-        printNode(dataOut, true, 1, 2, 'c', 0);
+            dataOut.writeChar('c');
+            printNode(dataOut, true, 1, 2, 'c', 0);
 
-        dataOut.writeChar('b');
-        printNode(dataOut, true, 1, 1, 'b', 0);
+            dataOut.writeChar('b');
+            printNode(dataOut, true, 1, 1, 'b', 0);
+        } catch (IOException e) {
+            System.out.println("Something went wrong with transforming trie to byte array, probable reason is:");
+            e.printStackTrace();
+        }
     }
 
     void printNode(DataOutputStream out, boolean isTerminal, int terminalsInSubtree, int depth, char lastOnPath, int nextSize) throws IOException {
