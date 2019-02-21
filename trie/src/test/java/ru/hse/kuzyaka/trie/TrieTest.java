@@ -213,7 +213,7 @@ class TrieTest {
     }
 
     @Test
-    void serializeProtocolTest() {
+    void serializeProtocolTest() throws IOException {
         try (var actual = new ByteArrayOutputStream(); var expected = new ByteArrayOutputStream()) {
             assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
 
@@ -225,14 +225,11 @@ class TrieTest {
             assertDoesNotThrow(() -> trie.serialize(actual));
 
             assertArrayEquals(expected.toByteArray(), actual.toByteArray());
-        } catch (IOException e) {
-            System.out.println("Something went wrong with serialization, probable reason is:");
-            e.printStackTrace();
         }
     }
 
     @Test
-    void deserializeProtocolTest() {
+    void deserializeProtocolTest() throws IOException {
         Trie expectedTrie;
         try (var expected = new ByteArrayOutputStream()) {
             assertDoesNotThrow(() -> simpleTrieToByteArray(expected));
@@ -245,9 +242,6 @@ class TrieTest {
 
             assertDoesNotThrow(() -> trie.deserialize(new ByteArrayInputStream(expected.toByteArray())));
             assertEquals(expectedTrie, trie);
-        } catch (IOException e) {
-            System.out.println("Something went wrong with deserialization, probable reason is:");
-            e.printStackTrace();
         }
 
     }
