@@ -172,7 +172,7 @@ class TrieTest {
         }
         Trie getter = new Trie();
 
-        moveData(trie, getter);
+        assertDoesNotThrow(() -> moveData(trie, getter));
 
         assertEquals(trie, getter);
     }
@@ -188,7 +188,7 @@ class TrieTest {
             getter.add(String.valueOf(i));
         }
 
-        moveData(trie, getter);
+        assertDoesNotThrow(() -> moveData(trie, getter));
 
         for (int i = 20; i < 30; i++) {
             assertFalse(getter.contains(String.valueOf(i)));
@@ -204,7 +204,7 @@ class TrieTest {
             getter.add(String.valueOf(i));
         }
 
-        moveData(trie, getter);
+        assertDoesNotThrow(() -> moveData(trie, getter));
 
         for (int i = 0; i < 10; i++) {
             assertFalse(trie.contains(String.valueOf(i)));
@@ -273,19 +273,16 @@ class TrieTest {
         assertNotEquals(trie, otherTrie);
     }
 
-    void moveData(Trie from, Trie to) {
+    void moveData(Trie from, Trie to) throws IOException {
         ByteArrayInputStream in;
         try (var out = new ByteArrayOutputStream()) {
             assertDoesNotThrow(() -> from.serialize(out));
             in = new ByteArrayInputStream(out.toByteArray());
             assertDoesNotThrow(() -> to.deserialize(in));
-        } catch (IOException e) {
-            System.out.println("Something went wrong with moving data, probable reason is:");
-            e.printStackTrace();
         }
     }
 
-    void simpleTrieToByteArray(ByteArrayOutputStream out) {
+    void simpleTrieToByteArray(ByteArrayOutputStream out) throws IOException {
         try (var dataOut = new DataOutputStream(out)) {
             printNode(dataOut, false, 4, 0, '\0', 2);
 
@@ -300,9 +297,6 @@ class TrieTest {
 
             dataOut.writeChar('b');
             printNode(dataOut, true, 1, 1, 'b', 0);
-        } catch (IOException e) {
-            System.out.println("Something went wrong with transforming trie to byte array, probable reason is:");
-            e.printStackTrace();
         }
     }
 
