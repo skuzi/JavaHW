@@ -39,6 +39,7 @@ public class PhoneNumber {
 
     /**
      * Returns all persons with the stored number
+     *
      * @return all persons with the stored number
      */
     public List<Person> getPersons() {
@@ -47,6 +48,7 @@ public class PhoneNumber {
 
     /**
      * Returns the stored number
+     *
      * @return the stored number
      */
     public String getNumber() {
@@ -55,6 +57,7 @@ public class PhoneNumber {
 
     /**
      * Attaches the stored number to the specific person (no operations with database are used)
+     *
      * @param person person to attach number to
      */
     public void addPerson(@NotNull Person person) {
@@ -63,6 +66,7 @@ public class PhoneNumber {
 
     /**
      * Detaches the stored number from the specific person (no operations with database are used)
+     *
      * @param person person to detach number from
      */
     public void removePerson(@NotNull Person person) {
@@ -71,6 +75,7 @@ public class PhoneNumber {
 
     /**
      * Checks if any person stored in the database has the stored number
+     *
      * @return {@code true} if some person has this number; {@code false} otherwise
      */
     public boolean hasAny() {
@@ -79,10 +84,10 @@ public class PhoneNumber {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         PhoneNumber that = (PhoneNumber) o;
