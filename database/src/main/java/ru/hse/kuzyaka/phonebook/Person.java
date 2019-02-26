@@ -34,6 +34,7 @@ public class Person {
 
     /**
      * Returns all numbers of this person
+     *
      * @return all numbers of this person
      */
     public List<PhoneNumber> getNumbers() {
@@ -42,6 +43,7 @@ public class Person {
 
     /**
      * Adds the specific number to this person
+     *
      * @param number number to add
      */
     public void addNumber(@NotNull PhoneNumber number) {
@@ -50,6 +52,7 @@ public class Person {
 
     /**
      * Removes the specific number from this person
+     *
      * @param number number to remove
      */
     public void removeNumber(PhoneNumber number) {
@@ -58,6 +61,7 @@ public class Person {
 
     /**
      * Checks if this person has any phone number
+     *
      * @return {@code true} if this person has at least one phone number; {@code false} otherwise
      */
     public boolean hasAny() {
@@ -66,6 +70,7 @@ public class Person {
 
     /**
      * Returns the name of this person
+     *
      * @return the name of this person
      */
     public String getName() {
