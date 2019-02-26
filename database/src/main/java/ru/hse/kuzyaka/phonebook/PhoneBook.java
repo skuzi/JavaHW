@@ -27,7 +27,7 @@ public class PhoneBook {
      * Returns {@link List} of phone numbers of the specific person
      *
      * @param name name used to select numbers
-     * @return {@link List} of phone numbers of the specific person
+     * @return {@link List} of phone numbers of the specific person or {@code null} if the phone book has no info about this person
      */
     public List<PhoneNumber> getNumbersByPerson(@NotNull String name) {
         @Nullable Person person = getPerson(name);
@@ -38,7 +38,7 @@ public class PhoneBook {
      * Returns {@link List} of persons with the specific number
      *
      * @param number number used to select persons
-     * @return {@link List} of persons with the specific number
+     * @return {@link List} of persons with the specific number or {@code null} if the phone book has no info about this number
      */
     public List<Person> getPersonsByNumber(@NotNull String number) {
         @Nullable PhoneNumber phoneNumber = getNumber(number);
