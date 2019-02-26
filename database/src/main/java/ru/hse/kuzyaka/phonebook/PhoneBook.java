@@ -216,5 +216,10 @@ public class PhoneBook {
             return number.getNumber();
         }
 
+        @Override
+        public String toString() {
+            return getName() + " " + getNumber();
+        }
+
     }
 }
