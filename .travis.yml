@@ -1,0 +1,6 @@
+language: java
+env:
+- PROJECT_DIR=database
+jdk:
+- oraclejdk11
+before_script: cd $PROJECT_DIR 
