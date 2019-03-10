@@ -7,9 +7,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Objects;
 
-/**
- * Data structure for storing set of strings. Basic operations have the complexity of O(|length|).
- */
+/** Data structure for storing set of strings. Basic operations have the complexity of O(|length|). */
 public class Trie implements Serializable {
     /** Root node which represents empty string. */
     private TrieNode root = new TrieNode();
@@ -45,7 +43,7 @@ public class Trie implements Serializable {
 
     /**
      * Returns hashcode of this trie
-     * 
+     *
      * @return hashcode of this trie
      */
     @Override
@@ -72,14 +70,14 @@ public class Trie implements Serializable {
      */
     public boolean add(@NotNull String element) {
         var lastNode = root.moveWithAdd(element);
-        var res = false;
+        var result = false;
 
         if (!lastNode.isTerminal) {
             lastNode.makeTerminal();
-            res = true;
+            result = true;
         }
 
-        return res;
+        return result;
     }
 
     /**
@@ -90,14 +88,14 @@ public class Trie implements Serializable {
      */
     public boolean remove(@NotNull String element) {
         var lastNode = root.moveWithoutAdd(element);
-        var res = false;
+        var result = false;
 
         if (lastNode.isTerminal && lastNode.depth == element.length()) {
             lastNode.makeNotTerminal();
-            res = true;
+            result = true;
         }
 
-        return res;
+        return result;
     }
 
     /**
