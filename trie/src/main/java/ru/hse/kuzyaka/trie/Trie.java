@@ -117,7 +117,7 @@ public class Trie implements Serializable {
      * Writes this trie as a byte sequence
      *
      * @param out <code>OutputStream</code> to write trie to
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     @Override
     public void serialize(@NotNull OutputStream out) throws IOException {
@@ -130,7 +130,7 @@ public class Trie implements Serializable {
      * Reads a trie from the given <code>InputStream</code>. Any data which the trie contained earlier, is discarded.
      *
      * @param in <code>InputStream</code> to read from
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     @Override
     public void deserialize(@NotNull InputStream in) throws IOException {
