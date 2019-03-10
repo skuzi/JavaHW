@@ -145,7 +145,7 @@ public class Trie implements Serializable {
         private boolean isTerminal;
         private int depth;
         private int terminalsInSubtree;
-        private HashMap<Character, TrieNode> next;
+        private HashMap<Character, TrieNode> childrenNodes;
         private @Nullable TrieNode parent;
         private char lastOnPath;
 
@@ -157,28 +157,28 @@ public class Trie implements Serializable {
             this.depth = depth;
             this.parent = parent;
             this.lastOnPath = lastOnPath;
-            next = new HashMap<>();
+            childrenNodes = new HashMap<>();
             terminalsInSubtree = 0;
             isTerminal = false;
         }
 
         private boolean hasNext(char c) {
-            return next.containsKey(c);
+            return childrenNodes.containsKey(c);
         }
 
         private TrieNode getNext(char c) {
             if (!hasNext(c)) {
-                next.put(c, new TrieNode(depth + 1, this, c));
+                childrenNodes.put(c, new TrieNode(depth + 1, this, c));
             }
-            return next.get(c);
+            return childrenNodes.get(c);
         }
 
         private TrieNode moveWithAdd(@NotNull String element) {
-            var curNode = this;
+            var currentNode = this;
             for (char c : element.toCharArray()) {
-                curNode = curNode.getNext(c);
+                currentNode = currentNode.getNext(c);
             }
-            return curNode;
+            return currentNode;
         }
 
         private TrieNode moveWithoutAdd(@NotNull String element) {
@@ -201,7 +201,7 @@ public class Trie implements Serializable {
                 parentNode.terminalsInSubtree--;
 
                 if (node.terminalsInSubtree == 0) {
-                    parentNode.next.remove(node.lastOnPath);
+                    parentNode.childrenNodes.remove(node.lastOnPath);
                 }
 
                 node = node.parent;
@@ -224,9 +224,9 @@ public class Trie implements Serializable {
             out.writeInt(terminalsInSubtree);
             out.writeInt(depth);
             out.writeChar(lastOnPath);
-            out.writeInt(next.size());
+            out.writeInt(childrenNodes.size());
 
-            for (var entry : next.entrySet()) {
+            for (var entry : childrenNodes.entrySet()) {
                 out.writeChar(entry.getKey());
                 entry.getValue().serializeSubtree(out);
             }
@@ -244,7 +244,7 @@ public class Trie implements Serializable {
 
                 child.deserializeSubtree(in);
 
-                next.put(edgeSymbol, child);
+                childrenNodes.put(edgeSymbol, child);
                 child.parent = this;
             }
         }
@@ -262,12 +262,12 @@ public class Trie implements Serializable {
                     depth == trieNode.depth &&
                     terminalsInSubtree == trieNode.terminalsInSubtree &&
                     lastOnPath == trieNode.lastOnPath &&
-                    Objects.equals(next, trieNode.next);
+                    Objects.equals(childrenNodes, trieNode.childrenNodes);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(isTerminal, depth, terminalsInSubtree, next, lastOnPath);
+            return Objects.hash(isTerminal, depth, terminalsInSubtree, childrenNodes, lastOnPath);
         }
     }
 }
