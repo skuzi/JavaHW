@@ -1,7 +1,6 @@
 package ru.hse.kuzyaka.reflector;
 
 import org.jetbrains.annotations.NotNull;
-import org.junit.platform.commons.util.CollectionUtils;
 
 import java.io.*;
 import java.lang.reflect.*;
@@ -10,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Reflector {
+    private static final String SOME_CLASS = "SomeClass";
     private static final int SPACE_IN_TAB = 4;
     private static StringBuilder out = new StringBuilder();
     private static int indent;
@@ -17,8 +17,8 @@ public class Reflector {
 
     public static void printStructure(@NotNull Class<?> someClass) throws IOException {
         printPackage(someClass);
-        printClass(someClass, "SomeClass");
-        writeClass();
+        printClass(someClass, SOME_CLASS);
+        writeClass(someClass);
     }
 
     public static boolean diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass, PrintStream writer) {
@@ -54,11 +54,11 @@ public class Reflector {
         printClassHeader(someClass, className);
         printClassFields(someClass);
         out.append("\n");
-//        printClassConstructors(someClass, className);
+        printClassConstructors(someClass, className);
         printClassMethods(someClass);
 
         for (var inner : someClass.getDeclaredClasses()) {
-            printClass(inner, inner.getCanonicalName());
+            printClass(inner, inner.getSimpleName());
         }
 
         out.append("}\n");
@@ -67,30 +67,31 @@ public class Reflector {
     private static void printClassHeader(Class<?> someClass, String className) {
         out.append(Modifier.toString(someClass.getModifiers())).append(" ").
                 append(someClass.isInterface() ? "" : "class ").
-                append(getNormalName(className)).append(genericSignature(someClass.getTypeParameters()));
+                append(className)
+                .append(genericSignature(someClass.getTypeParameters()));
         addImplementedAndExtended(someClass);
         out.append(" {\n");
     }
 
-    private static String getNormalName(String className) {
-        var split = className.split("\\.");
-        return split[split.length - 1];
-    }
-
     private static void addImplementedAndExtended(Class<?> someClass) {
-        if (someClass.getSuperclass() != null && someClass.getSuperclass() != Object.class) {
-            out.append(" extends ").append(someClass.getSuperclass().getCanonicalName());
+        Type superclass = someClass.getGenericSuperclass();
+        if (superclass != null && !superclass.getTypeName().equals("Object")) {
+            out.append(" extends ").append(superclass.getTypeName().replace('$', '.'));
         }
-        var interfaces = someClass.getInterfaces();
+        var interfaces = someClass.getGenericInterfaces();
         if (interfaces.length > 0) {
-            out.append(" implements ").
-                    append(Arrays.stream(interfaces).map(Class::getCanonicalName).
+            out.append(someClass.isInterface() ? " extends " : " implements ").
+                    append(Arrays.stream(interfaces).
+                            map((t) -> t.getTypeName().replace('$', '.')).
                             collect(Collectors.joining(", ", "", "")));
         }
     }
 
     private static void printClassMethods(Class<?> someClass) {
         for (var method : someClass.getDeclaredMethods()) {
+            if (method.isSynthetic()) {
+                continue;
+            }
             int modifiers = method.getModifiers();
             out.append(methodToString(method));
             printExceptions(method);
@@ -114,7 +115,7 @@ public class Reflector {
         if (exceptions.length > 0) {
             out.append(" throws ");
             out.append(Arrays.stream(exceptions).
-                    map(Type::getTypeName).
+                    map(t -> t.getTypeName().replace('$', '.')).
                     collect(Collectors.joining(", ", "", "")));
         }
     }
@@ -122,15 +123,17 @@ public class Reflector {
     private static String methodToString(Method method) {
         return Modifier.toString(method.getModifiers()) +
                 genericSignature(method.getTypeParameters()) +
-                " " + method.getGenericReturnType().getTypeName() +
+                " " + method.getGenericReturnType().getTypeName().replace('$', '.') +
                 " " + method.getName() +
-                parametersList(method.getParameters(), method.getGenericParameterTypes());
+                parametersList(method.getParameters(), method.getGenericParameterTypes(), false);
     }
 
-    private static String parametersList(Parameter[] parameters, Type[] parameterTypes) {
+    private static String parametersList(Parameter[] parameters, Type[] parameterTypes, boolean isInner) {
         Stream.Builder<String> builder = Stream.builder();
-        for (int i = 0; i < parameters.length; i++) {
-            builder.add(parameterTypes[i].getTypeName() + " " + parameters[i].getName());
+        int start = isInner ? 1 : 0;
+        for (int i = start; i < parameters.length; i++) {
+            builder.add(parameterTypes[i].getTypeName().replace('$', '.') +
+                    " " + parameters[i].getName());
         }
         return builder.build().collect(Collectors.joining(", ", "(", ")"));
     }
@@ -143,7 +146,7 @@ public class Reflector {
                 map((variable) -> variable.getName() +
                         " extends " +
                         Arrays.stream(variable.getBounds()).
-                                map(Type::getTypeName).
+                                map(t -> t.getTypeName().replace('$', '.')).
                                 collect(Collectors.joining(", "))).
                 collect(Collectors.joining(", ", " <", ">"));
     }
@@ -175,24 +178,25 @@ public class Reflector {
 
     private static String fieldToString(Field field) {
         return (field.getModifiers() != 0 ? Modifier.toString(field.getModifiers()) + " " : "") +
-                field.getGenericType().getTypeName() +
+                field.getGenericType().getTypeName().replace('$', '.') +
                 " " + field.getName();
     }
 
     private static void printClassConstructors(Class<?> someClass, String className) {
         var constructors = someClass.getDeclaredConstructors();
         for (var constructor : constructors) {
-            out.append(constructorToString(constructor, className));
+            out.append(constructorToString(constructor, className,
+                    someClass.getEnclosingClass() != null && !Modifier.isStatic(someClass.getModifiers())));
             out.append(" {\n\n}\n");
             out.append("\n");
         }
     }
 
-    private static String constructorToString(Constructor<?> constructor, String className) {
+    private static String constructorToString(Constructor<?> constructor, String className, boolean isInner) {
         return Modifier.toString(constructor.getModifiers()) +
                 genericSignature(constructor.getTypeParameters()) +
                 " " + className +
-                parametersList(constructor.getParameters(), constructor.getGenericParameterTypes());
+                parametersList(constructor.getParameters(), constructor.getGenericParameterTypes(), isInner);
     }
 
     private static void printPackage(Class<?> someClass) {
@@ -207,8 +211,8 @@ public class Reflector {
         indent--;
     }
 
-    private static void writeClass() throws IOException {
-        File file = new File("SomeClass.java");
+    private static void writeClass(Class<?> someClass) throws IOException {
+        File file = new File(SOME_CLASS + ".java");
         Writer writer = new OutputStreamWriter(new FileOutputStream(file));
         String clazz = out.toString();
         var lines = clazz.split("\n");
@@ -218,7 +222,8 @@ public class Reflector {
             }
 
             writer.write(getIndent());
-            writer.write(line);
+            writer.write(line.replaceAll("\\b" + someClass.getPackageName() + "\\." + someClass.getSimpleName() + "\\b", SOME_CLASS).
+                    replaceAll("<T", "<E"));
             writer.write("\n");
             if (line.endsWith("{")) {
                 increaseIndent();
@@ -246,11 +251,5 @@ public class Reflector {
             indentBuilder.append(tab);
         }
         return indentBuilder.toString();
-    }
-
-    public static void main(String[] args) throws IOException, NoSuchMethodException {
-        printStructure(Class1.class);
-//        var flag = diffClasses(SomeClass.class, TestClass.class, System.out);
-//        System.out.println(SomeClass.class.getMethod("lol").equals(TestClass.class.getMethod("lol")));
     }
 }
