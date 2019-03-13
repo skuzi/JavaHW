@@ -4,6 +4,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.reflect.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,14 +14,15 @@ import java.util.stream.Stream;
 public class Reflector {
     private static final String SOME_CLASS = "SomeClass";
     private static final int SPACE_IN_TAB = 4;
-    private static StringBuilder out = new StringBuilder();
+    private static StringBuilder out;
     private static int indent;
     private static String tab;
 
-    public static void printStructure(@NotNull Class<?> someClass) throws IOException {
+    public static void printStructure(@NotNull Class<?> someClass, @NotNull Path path) throws IOException {
+        out = new StringBuilder();
         printPackage(someClass);
         printClass(someClass, SOME_CLASS);
-        writeClass(someClass);
+        writeClass(someClass, path);
     }
 
     public static boolean diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass, PrintStream writer) {
@@ -53,7 +57,6 @@ public class Reflector {
         out.append("\n");
         printClassHeader(someClass, className);
         printClassFields(someClass);
-        out.append("\n");
         printClassConstructors(someClass, className);
         printClassMethods(someClass);
 
@@ -75,7 +78,7 @@ public class Reflector {
 
     private static void addImplementedAndExtended(Class<?> someClass) {
         Type superclass = someClass.getGenericSuperclass();
-        if (superclass != null && !superclass.getTypeName().equals("Object")) {
+        if (superclass != null && !superclass.getTypeName().equals("java.lang.Object")) {
             out.append(" extends ").append(superclass.getTypeName().replace('$', '.'));
         }
         var interfaces = someClass.getGenericInterfaces();
@@ -162,6 +165,9 @@ public class Reflector {
             }
             out.append(";\n");
         }
+        if (someClass.getDeclaredFields().length > 0) {
+            out.append("\n");
+        }
     }
 
     private static String getDefaultValue(Class<?> type) {
@@ -200,7 +206,7 @@ public class Reflector {
     }
 
     private static void printPackage(Class<?> someClass) {
-        out.append("package ").append(someClass.getPackageName()).append(";");
+        out.append("package ").append(someClass.getPackageName()).append(";\n");
     }
 
     private static void increaseIndent() {
@@ -211,18 +217,23 @@ public class Reflector {
         indent--;
     }
 
-    private static void writeClass(Class<?> someClass) throws IOException {
-        File file = new File(SOME_CLASS + ".java");
-        Writer writer = new OutputStreamWriter(new FileOutputStream(file));
+    private static void writeClass(Class<?> someClass, @NotNull Path path) throws IOException {
+        Path fullPath = Paths.get(path.toString(), someClass.getPackageName());
+        Files.createDirectories(fullPath);
+        File file = new File(fullPath.toString(),SOME_CLASS + ".java");
+
+        var writer = new FileWriter(file);
+
         String clazz = out.toString();
         var lines = clazz.split("\n");
         for (var line : lines) {
             if (line.endsWith("}")) {
                 decreaseIndent();
             }
-
             writer.write(getIndent());
-            writer.write(line.replaceAll("\\b" + someClass.getPackageName() + "\\." + someClass.getSimpleName() + "\\b", SOME_CLASS).
+            writer.write(line.replaceAll("\\b" +
+                    someClass.getPackageName() + "\\." +
+                    someClass.getSimpleName() + "\\b", SOME_CLASS).
                     replaceAll("<T", "<E"));
             writer.write("\n");
             if (line.endsWith("{")) {
