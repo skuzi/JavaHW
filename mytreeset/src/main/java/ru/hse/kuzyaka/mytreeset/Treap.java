@@ -16,9 +16,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
     private long version = 0;
     private Random random = new Random(239);
 
-    /**
-     * Constructs a new, empty treap according to the natural ordering of the elements
-     */
+    /** Constructs a new, empty treap according to the natural ordering of the elements */
     @SuppressWarnings("unchecked")
     public Treap() {
         this((Comparator<? super E>) Comparator.naturalOrder());
@@ -363,7 +361,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public boolean hasNext() {
-            if(this.version != Treap.this.version) {
+            if (this.version != Treap.this.version) {
                 throw new ConcurrentModificationException();
             }
             return pointer != null;
@@ -371,7 +369,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public E next() {
-            if(this.version != Treap.this.version) {
+            if (this.version != Treap.this.version) {
                 throw new ConcurrentModificationException();
             }
 
@@ -399,7 +397,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public boolean hasNext() {
-            if(this.version != Treap.this.version) {
+            if (this.version != Treap.this.version) {
                 throw new ConcurrentModificationException();
             }
             return pointer != null;
@@ -407,7 +405,7 @@ public class Treap<E> extends AbstractSet<E> implements MyTreeSet<E> {
 
         @Override
         public E next() {
-            if(this.version != Treap.this.version) {
+            if (this.version != Treap.this.version) {
                 throw new ConcurrentModificationException();
             }
 
