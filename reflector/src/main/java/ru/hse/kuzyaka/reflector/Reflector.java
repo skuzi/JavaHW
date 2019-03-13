@@ -84,6 +84,7 @@ public class Reflector {
             out.append(" extends ").append(superclass.getTypeName().replace('$', '.'));
         }
         var interfaces = someClass.getGenericInterfaces();
+        Arrays.sort(interfaces);
         if (interfaces.length > 0) {
             out.append(someClass.isInterface() ? " extends " : " implements ").
                     append(Arrays.stream(interfaces).
@@ -93,7 +94,9 @@ public class Reflector {
     }
 
     private static void printClassMethods(Class<?> someClass) {
-        for (var method : someClass.getDeclaredMethods()) {
+        var declaredMethods = someClass.getDeclaredMethods();
+        Arrays.sort(declaredMethods);
+        for (var method : declaredMethods) {
             if (method.isSynthetic()) {
                 continue;
             }
@@ -117,6 +120,7 @@ public class Reflector {
 
     private static void printExceptions(Method method) {
         var exceptions = method.getGenericExceptionTypes();
+        Arrays.sort(exceptions);
         if (exceptions.length > 0) {
             out.append(" throws ");
             out.append(Arrays.stream(exceptions).
@@ -144,6 +148,7 @@ public class Reflector {
     }
 
     private static String genericSignature(TypeVariable<?>[] typeVariables) {
+        Arrays.sort(typeVariables);
         if (typeVariables.length == 0) {
             return "";
         }
@@ -157,7 +162,9 @@ public class Reflector {
     }
 
     private static void printClassFields(Class<?> someClass) {
-        for (var field : someClass.getDeclaredFields()) {
+        var declaredFields = someClass.getDeclaredFields();
+        Arrays.sort(declaredFields);
+        for (var field : declaredFields) {
             if (field.isSynthetic()) {
                 continue;
             }
@@ -167,7 +174,7 @@ public class Reflector {
             }
             out.append(";\n");
         }
-        if (someClass.getDeclaredFields().length > 0) {
+        if (declaredFields.length > 0) {
             out.append("\n");
         }
     }
@@ -192,6 +199,7 @@ public class Reflector {
 
     private static void printClassConstructors(Class<?> someClass, String className) {
         var constructors = someClass.getDeclaredConstructors();
+        Arrays.sort(constructors);
         for (var constructor : constructors) {
             out.append(constructorToString(constructor, className,
                     someClass.getEnclosingClass() != null && !Modifier.isStatic(someClass.getModifiers())));
