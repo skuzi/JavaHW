@@ -60,7 +60,9 @@ public class Reflector {
         printClassConstructors(someClass, className);
         printClassMethods(someClass);
 
-        for (var inner : someClass.getDeclaredClasses()) {
+        Class<?>[] declaredClasses = someClass.getDeclaredClasses();
+        Arrays.sort(declaredClasses);
+        for (var inner : declaredClasses) {
             printClass(inner, inner.getSimpleName());
         }
 
@@ -233,8 +235,7 @@ public class Reflector {
             writer.write(getIndent());
             writer.write(line.replaceAll("\\b" +
                     someClass.getPackageName() + "\\." +
-                    someClass.getSimpleName() + "\\b", SOME_CLASS).
-                    replaceAll("<T", "<E"));
+                    someClass.getSimpleName() + "\\b", SOME_CLASS));
             writer.write("\n");
             if (line.endsWith("{")) {
                 increaseIndent();

@@ -3,6 +3,8 @@ package ru.hse.kuzyaka.reflector;
 import org.junit.jupiter.api.Test;
 import ru.hse.kuzyaka.reflector.testclasses.ClassWithFields;
 import ru.hse.kuzyaka.reflector.testclasses.Dummy;
+import ru.hse.kuzyaka.reflector.testclasses.Generic1;
+import ru.hse.kuzyaka.reflector.testclasses.Nested1;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,12 +12,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Ref;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ReflectorTest {
     private static Path prefix = Paths.get("src", "test", "java");
@@ -31,22 +35,19 @@ class ReflectorTest {
 
     @Test
     void testPrintSimple() throws IOException {
-        assertDoesNotThrow(() -> Reflector.printStructure(Dummy.class, prefix));
-        assertEquals("package ru.hse.kuzyaka.reflector.testclasses;\n" +
+        compareStructure(Dummy.class, "package ru.hse.kuzyaka.reflector.testclasses;\n" +
                 "\n" +
                 "public class SomeClass {\n" +
                 "    public SomeClass() {\n" +
                 "        \n" +
                 "    }\n" +
                 "    \n" +
-                "}", getFile(prefix, Dummy.class.getPackageName()));
-        shutDown(prefix.toString(), Dummy.class.getPackageName());
+                "}");
     }
 
     @Test
     void testPrintFields() throws IOException {
-        assertDoesNotThrow(() -> Reflector.printStructure(ClassWithFields.class, prefix));
-        assertEquals("package ru.hse.kuzyaka.reflector.testclasses;\n" +
+        compareStructure(ClassWithFields.class, "package ru.hse.kuzyaka.reflector.testclasses;\n" +
                 "\n" +
                 "public class SomeClass {\n" +
                 "    private int a;\n" +
@@ -61,14 +62,12 @@ class ReflectorTest {
                 "        \n" +
                 "    }\n" +
                 "    \n" +
-                "}", getFile(prefix, ClassWithFields.class.getPackageName()));
-        shutDown(prefix.toString(), ClassWithFields.class.getPackageName());
+                "}");
     }
 
     @Test
     void testPrintLang() throws IOException {
-        assertDoesNotThrow(() -> Reflector.printStructure(HashSet.class, prefix));
-        assertEquals("package java.util;\n" +
+        compareStructure(HashSet.class, "package java.util;\n" +
                 "\n" +
                 "public class SomeClass <E extends java.lang.Object> extends java.util.AbstractSet<E> implements java.util.Set<E>, java.lang.Cloneable, java.io.Serializable {\n" +
                 "    static final long serialVersionUID = 0;\n" +
@@ -136,9 +135,114 @@ class ReflectorTest {
                 "    private void writeObject(java.io.ObjectOutputStream arg0) throws java.io.IOException {\n" +
                 "    }\n" +
                 "    \n" +
-                "}", getFile(prefix, HashSet.class.getPackageName()));
-        shutDown(prefix.toString(), HashSet.class.getPackageName());
+                "}");
     }
 
+    @Test
+    void testNested() throws IOException {
+        compareStructure(Nested1.class, "package ru.hse.kuzyaka.reflector.testclasses;\n" +
+                "\n" +
+                "public class SomeClass {\n" +
+                "    private int i;\n" +
+                "    \n" +
+                "    public SomeClass() {\n" +
+                "        \n" +
+                "    }\n" +
+                "    \n" +
+                "    \n" +
+                "    private static class NestedA {\n" +
+                "        protected final int z = 0;\n" +
+                "        public int x;\n" +
+                "        public java.lang.String y;\n" +
+                "        \n" +
+                "         NestedA(int arg0, int arg1) {\n" +
+                "            \n" +
+                "        }\n" +
+                "        \n" +
+                "        \n" +
+                "        protected class NestInner {\n" +
+                "            public int x;\n" +
+                "            public java.lang.String y;\n" +
+                "            protected final int z = 0;\n" +
+                "            \n" +
+                "            protected NestInner() {\n" +
+                "                \n" +
+                "            }\n" +
+                "            \n" +
+                "        }\n" +
+                "        \n" +
+                "        private static class NestNest {\n" +
+                "            protected final int z = 0;\n" +
+                "            public int x;\n" +
+                "            public java.lang.String y;\n" +
+                "            \n" +
+                "             NestNest(int arg0, int arg1) {\n" +
+                "                \n" +
+                "            }\n" +
+                "            \n" +
+                "        }\n" +
+                "    }\n" +
+                "}");
+    }
+
+    @Test
+    void diffClassesSimple() {
+        assertFalse(Reflector.diffClasses(HashSet.class, HashMap.class, System.out));
+    }
+
+    @Test
+    void testInnerGeneric() throws IOException {
+        compareStructure(Generic1.class, "package ru.hse.kuzyaka.reflector.testclasses;\n" +
+                "\n" +
+                "public class SomeClass <T extends java.lang.Object, E extends java.util.List<T>> {\n" +
+                "    T field1;\n" +
+                "    E field2;\n" +
+                "    \n" +
+                "     SomeClass(T arg0) {\n" +
+                "        \n" +
+                "    }\n" +
+                "    \n" +
+                "     <B extends java.lang.Object> SomeClass(B arg0, T arg1) {\n" +
+                "        \n" +
+                "    }\n" +
+                "    \n" +
+                "    public T genericMethod(java.util.List<? super E> arg0, java.util.Map<T, ? extends T> arg1) {\n" +
+                "        return null;\n" +
+                "    }\n" +
+                "    \n" +
+                "    \n" +
+                "    private class Inner extends java.util.AbstractList<E> {\n" +
+                "        \n" +
+                "        private Inner() {\n" +
+                "            \n" +
+                "        }\n" +
+                "        \n" +
+                "        public E get(int arg0) {\n" +
+                "            return null;\n" +
+                "        }\n" +
+                "        \n" +
+                "        public int size() {\n" +
+                "            return 0;\n" +
+                "        }\n" +
+                "        \n" +
+                "    }\n" +
+                "    \n" +
+                "    static class genericNestedClass <B extends java.lang.Object> {\n" +
+                "        B field1;\n" +
+                "        \n" +
+                "         genericNestedClass() {\n" +
+                "            \n" +
+                "        }\n" +
+                "        \n" +
+                "    }\n" +
+                "}");
+    }
+
+
+    private void compareStructure(Class<?> clazz, String code) throws IOException {
+        assertDoesNotThrow(() -> Reflector.printStructure(clazz, prefix));
+        assertEquals(code, getFile(prefix, clazz.getPackageName()));
+        shutDown(prefix.toString(), clazz.getPackageName());
+    }
 
 }
