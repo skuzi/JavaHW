@@ -15,7 +15,7 @@ public interface Serializable {
      * Writes this object as a byte sequence
      *
      * @param out <code>OutputStream</code> to write trie to
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     void serialize(OutputStream out) throws IOException;
 
@@ -23,7 +23,7 @@ public interface Serializable {
      * Reads an object from the given <code>InputStream</code>. Any data which the object contained earlier, is discarded.
      *
      * @param in <code>InputStream</code> to read from
-     * @throws IOException
+     * @throws IOException if an I/O error occurs
      */
     void deserialize(InputStream in) throws IOException;
 }
