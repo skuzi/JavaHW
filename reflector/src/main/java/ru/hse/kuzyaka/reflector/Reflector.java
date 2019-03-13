@@ -26,29 +26,33 @@ public class Reflector {
     }
 
     public static boolean diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass, PrintStream writer) {
-        return differentMethods(firstClass, secondClass, writer) ||
-                differentFields(firstClass, secondClass, writer) ||
-                differentMethods(secondClass, firstClass, writer) ||
-                differentFields(secondClass, firstClass, writer);
+        return differentMethods(secondClass, firstClass, writer) ||
+                differentFields(secondClass, firstClass, writer) ||
+                differentMethods(firstClass, secondClass, writer) ||
+                differentFields(firstClass, secondClass, writer);
     }
 
     private static boolean differentFields(Class<?> firstClass, Class<?> secondClass, PrintStream writer) {
         var fieldsFirst = Arrays.stream(firstClass.getDeclaredFields()).
                 map(Reflector::fieldToString).collect(Collectors.toCollection(HashSet::new));
 
-        return Arrays.stream(secondClass.getDeclaredFields()).
+        var secondFields = secondClass.getDeclaredFields();
+        Arrays.sort(secondFields, Comparator.comparing(Field::getName));
+        return Arrays.stream(secondFields).
                 map(Reflector::fieldToString).
                 filter(s -> !fieldsFirst.contains(s)).
                 peek(writer::println).count() > 0;
     }
 
     private static boolean differentMethods(Class<?> firstClass, Class<?> secondClass, PrintStream writer) {
-        var methodsFirst = Arrays.stream(firstClass.getDeclaredMethods()).
+        var firstMethods = Arrays.stream(firstClass.getDeclaredMethods()).
                 map(Reflector::methodToString).collect(Collectors.toCollection(HashSet::new));
 
-        return Arrays.stream(secondClass.getDeclaredMethods()).
+        var secondMethods = secondClass.getDeclaredMethods();
+        Arrays.sort(secondMethods, Comparator.comparing(Method::getName));
+        return Arrays.stream(secondMethods).
                 map(Reflector::methodToString).
-                filter(s -> !methodsFirst.contains(s)).
+                filter(s -> !firstMethods.contains(s)).
                 peek(writer::println).count() > 0;
     }
 
