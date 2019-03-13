@@ -1,22 +1,14 @@
 package ru.hse.kuzyaka.reflector;
 
 import org.junit.jupiter.api.Test;
-import ru.hse.kuzyaka.reflector.testclasses.ClassWithFields;
-import ru.hse.kuzyaka.reflector.testclasses.Dummy;
-import ru.hse.kuzyaka.reflector.testclasses.Generic1;
-import ru.hse.kuzyaka.reflector.testclasses.Nested1;
+import ru.hse.kuzyaka.reflector.testclasses.*;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Ref;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,13 +42,13 @@ class ReflectorTest {
         compareStructure(ClassWithFields.class, "package ru.hse.kuzyaka.reflector.testclasses;\n" +
                 "\n" +
                 "public class SomeClass {\n" +
-                "    private int a;\n" +
-                "    private final int b = 0;\n" +
-                "    private static int c;\n" +
-                "    public java.lang.String str;\n" +
-                "    public final java.lang.Object obj = null;\n" +
-                "    public static java.util.List<java.lang.Object> list;\n" +
-                "    static final java.lang.Integer d = null;\n" +
+                "    private int field1;\n" +
+                "    private final int field2 = 0;\n" +
+                "    private static int field3;\n" +
+                "    static final java.lang.Integer field8 = null;\n" +
+                "    public static java.util.List<java.lang.Object> field7;\n" +
+                "    public final java.lang.Object obj = field5;\n" +
+                "    public java.lang.String field4;\n" +
                 "    \n" +
                 "    public SomeClass() {\n" +
                 "        \n" +
@@ -69,10 +61,10 @@ class ReflectorTest {
     void testPrintLang() throws IOException {
         compareStructure(HashSet.class, "package java.util;\n" +
                 "\n" +
-                "public class SomeClass <E extends java.lang.Object> extends java.util.AbstractSet<E> implements java.util.Set<E>, java.lang.Cloneable, java.io.Serializable {\n" +
-                "    static final long serialVersionUID = 0;\n" +
-                "    private transient java.util.HashMap<E, java.lang.Object> map;\n" +
+                "public class SomeClass <E extends java.lang.Object> extends java.util.AbstractSet<E> implements java.io.Serializable, java.lang.Cloneable, java.util.Set<E> {\n" +
                 "    private static final java.lang.Object PRESENT = null;\n" +
+                "    private transient java.util.HashMap<E, java.lang.Object> map;\n" +
+                "    static final long serialVersionUID = 0;\n" +
                 "    \n" +
                 "     SomeClass(int arg0, float arg1, boolean arg2) {\n" +
                 "        \n" +
@@ -98,22 +90,29 @@ class ReflectorTest {
                 "        return false;\n" +
                 "    }\n" +
                 "    \n" +
-                "    public boolean remove(java.lang.Object arg0) {\n" +
-                "        return false;\n" +
+                "    public void clear() {\n" +
                 "    }\n" +
                 "    \n" +
                 "    public java.lang.Object clone() {\n" +
                 "        return null;\n" +
                 "    }\n" +
                 "    \n" +
-                "    public void clear() {\n" +
+                "    public boolean contains(java.lang.Object arg0) {\n" +
+                "        return false;\n" +
                 "    }\n" +
                 "    \n" +
                 "    public boolean isEmpty() {\n" +
                 "        return false;\n" +
                 "    }\n" +
                 "    \n" +
-                "    public boolean contains(java.lang.Object arg0) {\n" +
+                "    public java.util.Iterator<E> iterator() {\n" +
+                "        return null;\n" +
+                "    }\n" +
+                "    \n" +
+                "    private void readObject(java.io.ObjectInputStream arg0) throws java.io.IOException, java.lang.ClassNotFoundException {\n" +
+                "    }\n" +
+                "    \n" +
+                "    public boolean remove(java.lang.Object arg0) {\n" +
                 "        return false;\n" +
                 "    }\n" +
                 "    \n" +
@@ -121,15 +120,8 @@ class ReflectorTest {
                 "        return 0;\n" +
                 "    }\n" +
                 "    \n" +
-                "    public java.util.Iterator<E> iterator() {\n" +
-                "        return null;\n" +
-                "    }\n" +
-                "    \n" +
                 "    public java.util.Spliterator<E> spliterator() {\n" +
                 "        return null;\n" +
-                "    }\n" +
-                "    \n" +
-                "    private void readObject(java.io.ObjectInputStream arg0) throws java.io.IOException, java.lang.ClassNotFoundException {\n" +
                 "    }\n" +
                 "    \n" +
                 "    private void writeObject(java.io.ObjectOutputStream arg0) throws java.io.IOException {\n" +
@@ -143,7 +135,7 @@ class ReflectorTest {
         compareStructure(Nested1.class, "package ru.hse.kuzyaka.reflector.testclasses;\n" +
                 "\n" +
                 "public class SomeClass {\n" +
-                "    private int i;\n" +
+                "    private int f1;\n" +
                 "    \n" +
                 "    public SomeClass() {\n" +
                 "        \n" +
@@ -151,9 +143,9 @@ class ReflectorTest {
                 "    \n" +
                 "    \n" +
                 "    private static class NestedA {\n" +
-                "        protected final int z = 0;\n" +
-                "        public int x;\n" +
-                "        public java.lang.String y;\n" +
+                "        protected final int f1 = 0;\n" +
+                "        public int f2;\n" +
+                "        public java.lang.String f3;\n" +
                 "        \n" +
                 "         NestedA(int arg0, int arg1) {\n" +
                 "            \n" +
@@ -161,9 +153,9 @@ class ReflectorTest {
                 "        \n" +
                 "        \n" +
                 "        protected class NestInner {\n" +
-                "            public int x;\n" +
-                "            public java.lang.String y;\n" +
-                "            protected final int z = 0;\n" +
+                "            public int f1;\n" +
+                "            public java.lang.String f2;\n" +
+                "            protected final int f3 = 0;\n" +
                 "            \n" +
                 "            protected NestInner() {\n" +
                 "                \n" +
@@ -172,9 +164,9 @@ class ReflectorTest {
                 "        }\n" +
                 "        \n" +
                 "        private static class NestNest {\n" +
-                "            protected final int z = 0;\n" +
-                "            public int x;\n" +
-                "            public java.lang.String y;\n" +
+                "            protected final int f1 = 0;\n" +
+                "            public int f2;\n" +
+                "            public java.lang.String f3;\n" +
                 "            \n" +
                 "             NestNest(int arg0, int arg1) {\n" +
                 "                \n" +
@@ -187,16 +179,16 @@ class ReflectorTest {
 
     @Test
     void diffClassesSimple() {
-        assertFalse(Reflector.diffClasses(HashSet.class, HashMap.class, System.out));
+        assertTrue(Reflector.diffClasses(HashSet.class, HashMap.class, System.out));
     }
 
     @Test
     void testInnerGeneric() throws IOException {
         compareStructure(Generic1.class, "package ru.hse.kuzyaka.reflector.testclasses;\n" +
                 "\n" +
-                "public class SomeClass <T extends java.lang.Object, E extends java.util.List<T>> {\n" +
-                "    T field1;\n" +
-                "    E field2;\n" +
+                "public class SomeClass <E extends java.util.List<T>, T extends java.lang.Object> {\n" +
+                "     T field1;\n" +
+                "     E field2;\n" +
                 "    \n" +
                 "     SomeClass(T arg0) {\n" +
                 "        \n" +
@@ -228,7 +220,7 @@ class ReflectorTest {
                 "    }\n" +
                 "    \n" +
                 "    static class genericNestedClass <B extends java.lang.Object> {\n" +
-                "        B field1;\n" +
+                "         B field1;\n" +
                 "        \n" +
                 "         genericNestedClass() {\n" +
                 "            \n" +
@@ -236,6 +228,23 @@ class ReflectorTest {
                 "        \n" +
                 "    }\n" +
                 "}");
+    }
+
+    @Test
+    void testDiffSame() {
+        assertFalse(Reflector.diffClasses(Generic1.class, Generic1Copy.class, System.out));
+    }
+
+    @Test
+    void testDifferent() {
+        var out = new ByteArrayOutputStream();
+        assertTrue(Reflector.diffClasses(Simple1.class, Simple2.class, new PrintStream(out)));
+        var sOut = out.toString();
+        System.out.println(sOut);
+        assertEquals(" void kek()\n" +
+                "public int y\n" +
+                "private void kek()\n" +
+                " int y\n", sOut);
     }
 
 

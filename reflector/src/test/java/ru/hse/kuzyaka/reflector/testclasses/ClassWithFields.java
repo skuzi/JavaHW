@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassWithFields {
-    private int a;
-    private final int b = 1;
-    private static int c;
-    public String str;
-    public final Object obj = null;
-    public static List<Object> list = new ArrayList<>();
-    static final Integer d = null;
+    private int field1;
+    private final int field2 = 1;
+    private static int field3;
+    public String field4;
+    public final Object field5 = null;
+    public static List<Object> field7 = new ArrayList<>();
+    static final Integer field8 = null;
 }
