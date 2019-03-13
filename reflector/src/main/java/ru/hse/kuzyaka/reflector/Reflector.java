@@ -26,9 +26,9 @@ public class Reflector {
     }
 
     public static boolean diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass, PrintStream writer) {
-        return differentMethods(secondClass, firstClass, writer) ||
-                differentFields(secondClass, firstClass, writer) ||
-                differentMethods(firstClass, secondClass, writer) ||
+        return differentMethods(secondClass, firstClass, writer) |
+                differentFields(secondClass, firstClass, writer) |
+                differentMethods(firstClass, secondClass, writer) |
                 differentFields(firstClass, secondClass, writer);
     }
 
@@ -196,7 +196,7 @@ public class Reflector {
     }
 
     private static String fieldToString(Field field) {
-        return (field.getModifiers() != 0 ? Modifier.toString(field.getModifiers()) + " " : "") +
+        return Modifier.toString(field.getModifiers()) + " " +
                 field.getGenericType().getTypeName().replace('$', '.') +
                 " " + field.getName();
     }
