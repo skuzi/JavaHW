@@ -1,6 +1,9 @@
 language: java
+
 env:
 - PROJECT_DIR=mytreeset
+
 jdk:
 - oraclejdk11
+
 before_script: cd $PROJECT_DIR 
