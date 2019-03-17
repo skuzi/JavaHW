@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/** Class for printing a structure of other classes and finding differences between them. */
 public class Reflector {
     private static final String SOME_CLASS = "SomeClass";
     private static final int SPACE_IN_TAB = 4;
@@ -18,6 +19,13 @@ public class Reflector {
     private static int indent;
     private static String tab;
 
+    /**
+     * Prints a structure of a given class to the specified path
+     *
+     * @param someClass class which is printed
+     * @param path path used to written class to
+     * @throws IOException if an I/O error occurs
+     */
     public static void printStructure(@NotNull Class<?> someClass, @NotNull Path path) throws IOException {
         out = new StringBuilder();
         printPackage(someClass);
@@ -25,6 +33,15 @@ public class Reflector {
         writeClass(someClass, path);
     }
 
+    /**
+     * Prints a differences between classes.
+     * More precisely, prints all declared fields and methods unique in the first class, then the same for the second class
+     *
+     * @param firstClass class which unique fields and methods are printed first
+     * @param secondClass class which unique field and methods are printed second
+     * @param writer PrintStream used as output
+     * @return {@code true} if classes are different, {@code false} otherwise
+     */
     public static boolean diffClasses(@NotNull Class<?> firstClass, @NotNull Class<?> secondClass, PrintStream writer) {
         return differentMethods(secondClass, firstClass, writer) |
                 differentFields(secondClass, firstClass, writer) |
