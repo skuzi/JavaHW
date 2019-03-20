@@ -20,12 +20,19 @@ public class QuickSort {
     }
 
     public static void sort(List<Integer> listToSort) {
+        if (isSorted(listToSort)) {
+            return;
+        }
         int[] arrayToSort = listToSort.stream().mapToInt(Integer::intValue).toArray();
         var threadPool = new ForkJoinPool();
         threadPool.invoke(new QuickSortTask(arrayToSort));
 
         listToSort.clear();
         IntStream.range(0, arrayToSort.length).forEach(i -> listToSort.add(arrayToSort[i]));
+    }
+
+    private static boolean isSorted(List<Integer> list) {
+        return IntStream.range(0, list.size() - 1).allMatch(i -> list.get(i) <= list.get(i + 1));
     }
 
     private static class QuickSortTask extends RecursiveAction {
