@@ -18,3 +18,11 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+task timeComparison(type: JavaExec) {
+    group = 'Tests'
+    description = 'Compares time of default sort and the parallel one'
+
+    classpath sourceSets.main.runtimeClasspath
+    main = "ru.hse.kuzyaka.qsort.SortTimeComparator"
+}
