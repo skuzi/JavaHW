@@ -7,18 +7,31 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 import java.util.stream.IntStream;
 
+/** Class implementing multithreading quick sort algorithm for sorting integer lists. **/
 public class QuickSort {
     private static int sortThreshold = 100;
-    private static Random random = new Random();
+    private static Random random = new Random(0);
 
+    /**
+     * Sets threshold which determines how small the array must be to perform Collections::sort on it (100 by default)
+     * @param sortThreshold new threshold
+     */
     public static void setSortThreshold(int sortThreshold) {
         QuickSort.sortThreshold = sortThreshold;
     }
 
+    /**
+     * Sets random number generator used when pivot element is chosen ({@code java.util.Random(0)} by default)
+     * @param random new random number generator
+     */
     public static void setRandom(Random random) {
         QuickSort.random = random;
     }
 
+    /**
+     * Sorts given list of integers using multithreading
+     * @param listToSort list which is to sort
+     */
     public static void sort(List<Integer> listToSort) {
         if (isSorted(listToSort)) {
             return;
