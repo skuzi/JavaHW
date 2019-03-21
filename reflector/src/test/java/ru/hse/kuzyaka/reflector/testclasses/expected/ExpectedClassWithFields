@@ -1,0 +1,16 @@
+package ru.hse.kuzyaka.reflector.testclasses;
+
+public class SomeClass {
+    private int field1;
+    private final int field2 = 0;
+    private static int field3;
+    public java.lang.String field4;
+    public final java.lang.Object field5 = null;
+    public static java.util.List<java.lang.Object> field7;
+    static final java.lang.Integer field8 = null;
+
+    public SomeClass() {
+
+    }
+
+}

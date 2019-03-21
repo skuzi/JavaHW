@@ -1,0 +1,15 @@
+package ru.hse.kuzyaka.reflector.testclasses;
+
+public abstract interface SomeClass extends java.io.Serializable, java.lang.Runnable {
+    public static final int x = 0;
+
+    public abstract void println();
+
+    public abstract void run();
+
+
+    public abstract static interface InnerInterface {
+        public static final java.lang.String s = null;
+
+    }
+}
