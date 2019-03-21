@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PhoneBookTest {
-    private PhoneBook phoneBook = new PhoneBook();
+    private PhoneBook phoneBook = new PhoneBook("test");
 
     @BeforeEach
     void setUp() {

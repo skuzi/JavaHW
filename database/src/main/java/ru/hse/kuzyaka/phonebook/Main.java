@@ -50,15 +50,25 @@ public class Main {
                     break;
                 case 2:
                     name = getString("NAME");
-                    phoneBook.getNumbersByPerson(name).stream().
-                            map(PhoneNumber::getNumber).
-                            forEach(System.out::println);
+                    var numbers = phoneBook.getNumbersByPerson(name);
+                    if (numbers == null) {
+                        System.out.println("PERSON DIDN'T EXIST");
+                    } else {
+                        numbers.stream().
+                                map(PhoneNumber::getNumber).
+                                forEach(System.out::println);
+                    }
                     break;
                 case 3:
                     number = getString("NUMBER");
-                    phoneBook.getPersonsByNumber(number).stream().
-                            map(Person::getName).
-                            forEach(System.out::println);
+                    var persons = phoneBook.getPersonsByNumber(number);
+                    if (persons == null) {
+                        System.out.println("NUMBER DIDN'T EXIST");
+                    } else {
+                        persons.stream().
+                                map(Person::getName).
+                                forEach(System.out::println);
+                    }
                     break;
                 case 4:
                     name = getString("NAME");

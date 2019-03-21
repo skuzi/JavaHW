@@ -18,7 +18,11 @@ public class PhoneBook {
     final private Datastore datastore;
 
     public PhoneBook() {
-        datastore = morphia.createDatastore(new MongoClient("localhost", 27017), "phonebook");
+        this("phonebook");
+    }
+
+    public PhoneBook(String databaseName) {
+        datastore = morphia.createDatastore(new MongoClient("localhost", 27017), databaseName);
         morphia.mapPackage("ru.hse.kuzyaka.phonebook");
         datastore.ensureIndexes();
     }
@@ -106,7 +110,7 @@ public class PhoneBook {
      * @param number  number of the person
      * @param oldName name to change
      * @param newName new name
-     * @return
+     * @return {@code true} if name was changed; {@code false} otherwise
      */
     public boolean changeName(@NotNull String number, @NotNull String oldName, @NotNull String newName) {
         if (!deleteRecord(oldName, number)) {
