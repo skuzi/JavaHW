@@ -1,0 +1,69 @@
+package java.util;
+
+public class SomeClass <E extends java.lang.Object> extends java.util.AbstractSet<E> implements java.io.Serializable, java.lang.Cloneable, java.util.Set<E> {
+    private static final java.lang.Object PRESENT = null;
+    private transient java.util.HashMap<E, java.lang.Object> map;
+    static final long serialVersionUID = 0;
+
+     SomeClass(int arg0, float arg1, boolean arg2) {
+
+    }
+
+    public SomeClass(int arg0) {
+
+    }
+
+    public SomeClass(int arg0, float arg1) {
+
+    }
+
+    public SomeClass(java.util.Collection<? extends E> arg0) {
+
+    }
+
+    public SomeClass() {
+
+    }
+
+    public boolean add(E arg0) {
+        return false;
+    }
+
+    public void clear() {
+    }
+
+    public java.lang.Object clone() {
+        return null;
+    }
+
+    public boolean contains(java.lang.Object arg0) {
+        return false;
+    }
+
+    public boolean isEmpty() {
+        return false;
+    }
+
+    public java.util.Iterator<E> iterator() {
+        return null;
+    }
+
+    private void readObject(java.io.ObjectInputStream arg0) throws java.io.IOException, java.lang.ClassNotFoundException {
+    }
+
+    public boolean remove(java.lang.Object arg0) {
+        return false;
+    }
+
+    public int size() {
+        return 0;
+    }
+
+    public java.util.Spliterator<E> spliterator() {
+        return null;
+    }
+
+    private void writeObject(java.io.ObjectOutputStream arg0) throws java.io.IOException {
+    }
+
+}

@@ -1,0 +1,43 @@
+package ru.hse.kuzyaka.reflector.testclasses;
+
+public class SomeClass {
+    private int f1;
+
+    public SomeClass() {
+
+    }
+
+
+    private static class NestedA {
+        protected final int f1 = 0;
+        public int f2;
+        public java.lang.String f3;
+
+         NestedA(int arg0, int arg1) {
+
+        }
+
+
+        protected class NestInner {
+            public int f1;
+            public java.lang.String f2;
+            protected final int f3 = 0;
+
+            protected NestInner() {
+
+            }
+
+        }
+
+        private static class NestNest {
+            protected final int f1 = 0;
+            public int f2;
+            public java.lang.String f3;
+
+             NestNest(int arg0, int arg1) {
+
+            }
+
+        }
+    }
+}
