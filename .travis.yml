@@ -3,8 +3,7 @@ jdk:
 - oraclejdk11
 
 env:
-- PROJECT_DIR=mytreeset
+- PROJECT_DIR=qsort
 
 before_script:
 - cd "$PROJECT_DIR"
-
