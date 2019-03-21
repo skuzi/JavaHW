@@ -24,11 +24,22 @@ public class Main {
         return SCANNER.next();
     }
 
+    private static void showCommands() {
+        System.out.println("0 - EXIT\n" +
+                "1 - ADD NEW RECORD\n" +
+                "2 - FIND PHONE NUMBERS BY NAME\n" +
+                "3 - FIND PERSONS BY PHONE NUMBER\n" +
+                "4 - DELETE RECORD\n" +
+                "5 - CHANGE NAME IN RECORD\n" +
+                "6 - CHANGE PHONE NUMBER IN RECORD\n" +
+                "7 - PRINT ALL RECORDS");
+    }
+
 
     public static void main(String[] args) {
         int commandId;
         PhoneBook phoneBook = new PhoneBook();
-        phoneBook.clear();
+        showCommands();
 
         do {
             String name;
@@ -112,5 +123,4 @@ public class Main {
 
         } while (commandId != 0);
     }
-
 }
