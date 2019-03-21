@@ -250,8 +250,7 @@ public class Reflector {
     }
 
     private static void writeClass(Class<?> someClass, @NotNull Path path) throws IOException {
-        Path fullPath = Paths.get(path.toString(), someClass.getPackageName());
-        Files.createDirectories(fullPath);
+        Path fullPath = Paths.get(path.toString());
         File file = new File(fullPath.toString(),SOME_CLASS + ".java");
 
         var writer = new FileWriter(file);
@@ -259,6 +258,11 @@ public class Reflector {
         String clazz = out.toString();
         var lines = clazz.split(SEPARATOR);
         for (var line : lines) {
+            if (line.equals("")) {
+                writer.write(SEPARATOR);
+                continue;
+            }
+
             if (line.endsWith("}")) {
                 decreaseIndent();
             }
