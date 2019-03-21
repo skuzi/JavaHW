@@ -15,6 +15,7 @@ import java.util.stream.Stream;
 public class Reflector {
     private static final String SOME_CLASS = "SomeClass";
     private static final int SPACE_IN_TAB = 4;
+    private static final String SEPARATOR = System.lineSeparator();
     private static StringBuilder out;
     private static int indent;
     private static String tab;
@@ -75,7 +76,7 @@ public class Reflector {
 
 
     private static void printClass(Class<?> someClass, String className) {
-        out.append("\n");
+        out.append(SEPARATOR);
         printClassHeader(someClass, className);
         printClassFields(someClass);
         printClassConstructors(someClass, className);
@@ -87,7 +88,7 @@ public class Reflector {
             printClass(inner, inner.getSimpleName());
         }
 
-        out.append("}\n");
+        out.append("}" + SEPARATOR);
     }
 
     private static void printClassHeader(Class<?> someClass, String className) {
@@ -96,7 +97,7 @@ public class Reflector {
                 append(className)
                 .append(genericSignature(someClass.getTypeParameters()));
         addImplementedAndExtended(someClass);
-        out.append(" {\n");
+        out.append(" {" + SEPARATOR);
     }
 
     private static void addImplementedAndExtended(Class<?> someClass) {
@@ -125,17 +126,17 @@ public class Reflector {
             out.append(methodToString(method));
             printExceptions(method);
             if (!Modifier.isAbstract(modifiers)) {
-                out.append(" {\n");
+                out.append(" {" + SEPARATOR);
                 if (!method.getGenericReturnType().getTypeName().equals("void")) {
                     out.append("return ").
                             append(getDefaultValue(method.getReturnType())).
-                            append(";\n");
+                            append(";" + SEPARATOR);
                 }
                 out.append("}");
             } else {
                 out.append(";");
             }
-            out.append("\n\n");
+            out.append(SEPARATOR + SEPARATOR);
         }
     }
 
@@ -193,10 +194,10 @@ public class Reflector {
             if (Modifier.isFinal(field.getModifiers())) {
                 out.append(" = ").append(getDefaultValue(field.getType()));
             }
-            out.append(";\n");
+            out.append(";" + SEPARATOR);
         }
         if (declaredFields.length > 0) {
-            out.append("\n");
+            out.append(SEPARATOR);
         }
     }
 
@@ -224,8 +225,8 @@ public class Reflector {
         for (var constructor : constructors) {
             out.append(constructorToString(constructor, className,
                     someClass.getEnclosingClass() != null && !Modifier.isStatic(someClass.getModifiers())));
-            out.append(" {\n\n}\n");
-            out.append("\n");
+            out.append(" {" + SEPARATOR + SEPARATOR + "}" + SEPARATOR);
+            out.append(SEPARATOR);
         }
     }
 
@@ -237,7 +238,7 @@ public class Reflector {
     }
 
     private static void printPackage(Class<?> someClass) {
-        out.append("package ").append(someClass.getPackageName()).append(";\n");
+        out.append("package ").append(someClass.getPackageName()).append(";" + SEPARATOR);
     }
 
     private static void increaseIndent() {
@@ -256,7 +257,7 @@ public class Reflector {
         var writer = new FileWriter(file);
 
         String clazz = out.toString();
-        var lines = clazz.split("\n");
+        var lines = clazz.split(SEPARATOR);
         for (var line : lines) {
             if (line.endsWith("}")) {
                 decreaseIndent();
@@ -265,7 +266,7 @@ public class Reflector {
             writer.write(line.replaceAll("\\b" +
                     someClass.getPackageName() + "\\." +
                     someClass.getSimpleName() + "\\b", SOME_CLASS));
-            writer.write("\n");
+            writer.write(SEPARATOR);
             if (line.endsWith("{")) {
                 increaseIndent();
             }
