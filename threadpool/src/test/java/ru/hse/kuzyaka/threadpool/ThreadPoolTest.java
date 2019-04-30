@@ -90,9 +90,9 @@ public class ThreadPoolTest {
         var future1 = pool.submit(() -> 1);
         var future2 = future1.thenApply(x -> x * 2);
         var future3 = future2.thenApply(x -> x * 2);
-        assertEquals(1, future1.get());
-        assertEquals(2, future2.get());
-        assertEquals(4, future3.get());
+        assertEquals(1, (int)future1.get());
+        assertEquals(2, (int)future2.get());
+        assertEquals(4, (int)future3.get());
     }
 
     @RepeatedTest(20)
