@@ -3,7 +3,7 @@ jdk:
 - oraclejdk11
 
 env:
-- PROJECT_DIR=qsort
+- PROJECT_DIR=threadpool
 
 before_script:
 - cd "$PROJECT_DIR"
