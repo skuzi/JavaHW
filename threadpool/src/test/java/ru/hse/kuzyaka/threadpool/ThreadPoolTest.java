@@ -3,13 +3,14 @@ package ru.hse.kuzyaka.threadpool;
 import org.junit.jupiter.api.RepeatedTest;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 
 import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ThreadPoolTest {
-
+class ThreadPoolTest {
+    private static final int TEST_REPETITION_COUNT = 20;
     private Supplier<Task> supplier = () -> {
         var task = new Task();
         task.doWork();
@@ -42,41 +43,41 @@ public class ThreadPoolTest {
         assertTrue(flag);
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testFewTasksFewThreads() {
         runTasks(10, 10);
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testManyTasksFewThreads() {
         runTasks(10, 500);
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testFewTasksManyThreads() {
         runTasks(100, 50);
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testManyTasksManyThreads() {
         runTasks(100, 500);
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testThrowsException() {
         var pool = new ThreadPool(5);
         var lightFuture = pool.submit(() -> 5 / 0);
         assertThrows(LightExecutionException.class, lightFuture::get);
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testShutDownDoesNotTakeSubmissions() {
         var pool = new ThreadPool(5);
         pool.shutdown();
         assertThrows(IllegalStateException.class, () -> pool.submit(() -> 1));
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testShutDownDoesNotTakeThenApply() {
         var pool = new ThreadPool(5);
         var future = pool.submit(() -> 1);
@@ -84,22 +85,34 @@ public class ThreadPoolTest {
         assertThrows(IllegalStateException.class, () -> future.thenApply(x -> x * 2));
     }
 
-    @RepeatedTest(20)
+    @RepeatedTest(TEST_REPETITION_COUNT)
     void testThenApply() throws InterruptedException {
         var pool = new ThreadPool(5);
         var future1 = pool.submit(() -> 1);
         var future2 = future1.thenApply(x -> x * 2);
         var future3 = future2.thenApply(x -> x * 2);
-        assertEquals(1, (int)future1.get());
-        assertEquals(2, (int)future2.get());
-        assertEquals(4, (int)future3.get());
+        assertEquals(1, (int) future1.get());
+        assertEquals(2, (int) future2.get());
+        assertEquals(4, (int) future3.get());
     }
 
-    @RepeatedTest(20)
-    void testAllThreadsCreated() {
-        int threadStart = Thread.activeCount();
-        var pool = new ThreadPool(100);
-        assertEquals(threadStart + 100, Thread.activeCount());
+    @RepeatedTest(TEST_REPETITION_COUNT)
+    void testAllThreadsCreated() throws InterruptedException {
+        final int SIZE = 100;
+        var pool = new ThreadPool(SIZE);
+        var value = new AtomicInteger(0);
+        for (int i = 0; i < 10 * SIZE; i++) {
+            pool.submit(() -> {
+                value.incrementAndGet();
+                try {
+                    sleep(Long.MAX_VALUE);
+                } catch (InterruptedException ignored) {
+                }
+                return null;
+            });
+        }
+        sleep(300);
+        assertEquals(SIZE, value.get());
     }
 
     private static class Task {
