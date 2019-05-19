@@ -43,12 +43,15 @@ public class ThreadPool {
     }
 
     /**
-     * Shuts the thread pool down (tries to interrupt all threads)
+     * Shuts the thread pool down (tries to interrupt all threads and joins them)
      */
-    public void shutdown() {
+    public void shutdown() throws InterruptedException {
         isShutDown = true;
         for (Thread thread : threads) {
             thread.interrupt();
+        }
+        for (Thread thread : threads) {
+            thread.join();
         }
     }
 

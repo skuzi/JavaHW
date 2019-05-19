@@ -25,7 +25,7 @@ class ThreadPoolTest {
         }
 
         try {
-            sleep(50);
+            sleep(100);
         } catch (InterruptedException ignored) {
 
         }
@@ -71,14 +71,14 @@ class ThreadPoolTest {
     }
 
     @RepeatedTest(TEST_REPETITION_COUNT)
-    void testShutDownDoesNotTakeSubmissions() {
+    void testShutDownDoesNotTakeSubmissions() throws InterruptedException {
         var pool = new ThreadPool(5);
         pool.shutdown();
         assertThrows(IllegalStateException.class, () -> pool.submit(() -> 1));
     }
 
     @RepeatedTest(TEST_REPETITION_COUNT)
-    void testShutDownDoesNotTakeThenApply() {
+    void testShutDownDoesNotTakeThenApply() throws InterruptedException {
         var pool = new ThreadPool(5);
         var future = pool.submit(() -> 1);
         pool.shutdown();
