@@ -1,7 +1,6 @@
 package ru.hse.kuzyaka.cannon;
 
 import javafx.application.Platform;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -9,8 +8,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class GameOverAlert {
-    Alert alert = null;
-    Stage stage;
+    private Alert alert;
+    private Stage stage;
     private boolean wasShown;
 
     public GameOverAlert(Stage stage) {
