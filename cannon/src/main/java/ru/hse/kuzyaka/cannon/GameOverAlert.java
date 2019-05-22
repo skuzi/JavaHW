@@ -9,11 +9,9 @@ import javafx.stage.Stage;
 
 public class GameOverAlert {
     private Alert alert;
-    private Stage stage;
     private boolean wasShown;
 
     public GameOverAlert(Stage stage) {
-        this.stage = stage;
         alert = new Alert(Alert.AlertType.INFORMATION, "YATTA!");
         Button exitButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
         exitButton.setText("Exit");
