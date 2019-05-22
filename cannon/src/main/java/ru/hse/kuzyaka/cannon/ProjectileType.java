@@ -1,5 +1,6 @@
 package ru.hse.kuzyaka.cannon;
 
+/** Enum representing a projectile type **/
 public enum ProjectileType {
     BIG {
         @Override

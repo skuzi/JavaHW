@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 
+/** Class representing a game **/
 public class Main extends Application {
     private static final int WIDTH = 1280;
     private static final int HEIGHT = 800;
@@ -32,12 +33,17 @@ public class Main extends Application {
     private Group root = new Group();
     private HashSet<String> pressedKeys = new HashSet<>();
 
+    /**
+     * Launch a game with the given command line arguments
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         Application.launch(args);
     }
 
+    /** {@inheritDoc} **/
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         stage.setTitle("Scorched Earth");
         stage.setWidth(WIDTH);
         stage.setHeight(HEIGHT);

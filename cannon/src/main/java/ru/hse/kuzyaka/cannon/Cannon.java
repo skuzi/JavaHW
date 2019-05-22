@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 
 import static java.lang.Math.*;
 
+/** class representing a cannon **/
 public class Cannon implements GameObject {
     public static final double VELOCITY = 1.5;
     public static final double ROTATE_SPEED = 0.05;
@@ -18,13 +19,20 @@ public class Cannon implements GameObject {
     private Landscape landscape;
     private double angle = 0;
 
+    /**
+     * Creates a cannon
+     *
+     * @param position center of the cannon's wheel circle
+     * @param landscape landscape
+     * @param projectileType base type of projectiles shot by this cannon
+     */
     public Cannon(Point2D position, Landscape landscape, ProjectileType projectileType) {
         this.position = position;
         this.landscape = landscape;
         this.projectileType = projectileType;
     }
 
-    public void updateAngle(double angleDelta) {
+    private void updateAngle(double angleDelta) {
         angle += angleDelta;
     }
 
@@ -40,6 +48,11 @@ public class Cannon implements GameObject {
         return x;
     }
 
+    /**
+     * Shoots a projectile determined by the angle of the cannon.
+     *
+     * @return projectile shot by the cannon
+     */
     public Projectile shoot() {
         return new Projectile(projectileType,
                 new Point2D(projectileType.velocity() * cos(angle),
@@ -51,6 +64,7 @@ public class Cannon implements GameObject {
         this.projectileType = projectileType;
     }
 
+    /** {@inheritDoc} **/
     @Override
     public void draw(Renderer renderer) {
         Point2D barrelEnd = new Point2D(Math.cos(angle), Math.sin(angle)).multiply(BARREL_HEIGHT);
@@ -62,11 +76,13 @@ public class Cannon implements GameObject {
         renderer.drawLine(secondLineOfBarrel);
     }
 
+    /** {@inheritDoc} **/
     @Override
     public boolean isAlive() {
         return true;
     }
 
+    /** {@inheritDoc} **/
     @Override
     public void move() {
         position = position.add(VELOCITY * cannonDirection.getValue(), 0);
