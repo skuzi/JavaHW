@@ -2,7 +2,16 @@ package ru.hse.kuzyaka.myjunit;
 
 import java.util.List;
 
+/** Body for console application **/
 public class Main {
+    /**
+     * Method for running test class via application
+     *
+     * @param args arguments of application. To work correctly, must be single string, containing class name.
+     *             If args size is not 1, exits with code 1.
+     *             If class cannot be found, exits with code 2.
+     *             If class contains errors critical for testing, exits with code 3.
+     */
     public static void main(String[] args) {
         if (args.length != 1) {
             System.out.println("Argument must be a single string, containing class name");

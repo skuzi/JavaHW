@@ -13,7 +13,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/** Class for testing test classes **/
 public class MyJUnit {
+    /**
+     * Tries to run the given test class
+     *
+     * @param testClass class containing tests
+     * @return list of {@code TestResult}
+     * @throws MyJUnitTestException if an error occurred while parsing test class
+     *                              (i.e. not all @BeforeClass methods are static)
+     */
     public static List<TestResult> run(Class<?> testClass) throws MyJUnitTestException {
         Method[] methods = testClass.getMethods();
         List<Method> beforeClassMethods = getAnnotatedMethods(methods, BeforeClass.class);
