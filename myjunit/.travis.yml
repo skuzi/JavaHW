@@ -1,6 +1,0 @@
-language: java
-env:
-- PROJECT_DIR=myjunit
-jdk:
-- oraclejdk11
-before_script: cd $PROJECT_DIR 
