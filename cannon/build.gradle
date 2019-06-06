@@ -9,8 +9,16 @@ javafx {
 }
 group 'ru.hse.kuzyaka'
 version '1.0-SNAPSHOT'
-mainClassName = "ru.hse.kuzyaka.cannon.Main"
+mainClassName = "ru.hse.kuzyaka.cannon.Launcher"
 sourceCompatibility = 11
 repositories {
     mavenCentral()
+}
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.hse.kuzyaka.cannon.Launcher'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }

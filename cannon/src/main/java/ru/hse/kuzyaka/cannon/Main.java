@@ -40,7 +40,7 @@ public class Main extends Application {
      * Launch a game with the given command line arguments
      * @param args command line arguments
      */
-    public static void main(String[] args) {
+    public static void run(String[] args) {
         Application.launch(args);
     }
 
