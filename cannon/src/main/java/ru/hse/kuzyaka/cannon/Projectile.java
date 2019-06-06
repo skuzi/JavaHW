@@ -35,7 +35,7 @@ public class Projectile implements GameObject {
         if (line == null) {
             return true;
         }
-        return line.distance(position) < type.radius() || line.getYbyX(position.getX()) < position.getY();
+        return line.distance(position) < type.radius() || line.getYbyX(position.getX()) > position.getY();
     }
 
     /**
@@ -51,7 +51,7 @@ public class Projectile implements GameObject {
      **/
     @Override
     public boolean isAlive() {
-        return hasFallen();
+        return !hasFallen();
     }
 
     /**

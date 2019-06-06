@@ -8,7 +8,7 @@ public interface GameObject {
     /**
      * Tells whether this object is alive
      *
-     * @return {@code true} if the object is alive
+     * @return {@code true} if the object is alive (i.e. it should be drawn)
      */
     boolean isAlive();
 

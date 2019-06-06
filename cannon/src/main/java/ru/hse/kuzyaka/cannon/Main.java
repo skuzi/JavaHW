@@ -20,6 +20,9 @@ public class Main extends Application {
     private static final int HEIGHT = 800;
     private static final int TARGET_RADIUS = 10;
     private static final int WIDTH_IN_METERS = 1000;
+    private static final String CHOOSE_PROJECTILE_MESSAGE = "Projectiles: \n 1 -- small \n 2 -- medium \n 3 -- big";
+    private static final double TEXT_BEGIN_X = 10;
+    private static final double TEXT_BEGIN_Y = 40;
 
 
     private ProjectileType projectileType = ProjectileType.SMALL;
@@ -108,6 +111,7 @@ public class Main extends Application {
                 landscape.draw(renderer);
                 cannon.draw(renderer);
                 target.draw(renderer);
+                renderer.drawText(CHOOSE_PROJECTILE_MESSAGE, TEXT_BEGIN_X, TEXT_BEGIN_Y);
 
                 for (var bang : bangs) {
                     if (bang.hasHit(targetPosition, TARGET_RADIUS)) {

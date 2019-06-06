@@ -13,10 +13,11 @@ public class Landscape implements GameObject {
     /**
      * Creates the landscape
      *
-     * @param points points on which the landscape is based
+     * @param points points on which the landscape is based, resulting points are sorted by x coordinate
      */
     public Landscape(List<Point2D> points) {
         this.points.addAll(points);
+        this.points.sort((firstPoint, secondPoint) -> (int) (firstPoint.getX() - secondPoint.getX()));
         for (int i = 0; i < points.size() - 1; i++) {
             lines.add(new Line(points.get(i), points.get(i + 1)));
         }

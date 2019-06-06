@@ -12,6 +12,7 @@ public class Cannon implements GameObject {
     public static final int BARREL_HEIGHT = 30;
     public static final int BARREL_WIDTH = 8;
 
+    private static final double EPSILON = 1e-9;
     private Point2D position;
     private ProjectileType projectileType;
     private Direction cannonDirection = Direction.NONE;
@@ -69,11 +70,21 @@ public class Cannon implements GameObject {
     public void draw(Renderer renderer) {
         Point2D barrelEnd = new Point2D(Math.cos(angle), Math.sin(angle)).multiply(BARREL_HEIGHT);
         renderer.drawCircle(position, RADIUS);
-        Line firstLineOfBarrel = new Line(position, position.add(barrelEnd));
-        Point2D normalVector = new Point2D(abs(firstLineOfBarrel.getGradient()), 1).normalize().multiply(BARREL_WIDTH);
-        Line secondLineOfBarrel = new Line(position.add(normalVector), position.add(barrelEnd).add(normalVector));
-        renderer.drawLine(firstLineOfBarrel);
-        renderer.drawLine(secondLineOfBarrel);
+
+        Line middleOfBarrel = new Line(position, position.add(barrelEnd));
+        Point2D normalVector = new Point2D(-middleOfBarrel.getGradient(), 1).normalize().multiply(BARREL_WIDTH);
+
+        Point2D beginOfFirstLine = position.add(normalVector.multiply(0.5));
+        Point2D beginOfSecondLine = position.subtract(normalVector.multiply(0.5));
+
+        Line firstLineOfBarrel = new Line(beginOfFirstLine, beginOfFirstLine.add(barrelEnd));
+        Line secondLineOfBarrel = new Line(beginOfSecondLine, beginOfSecondLine.add(barrelEnd));
+
+        renderer.drawRectangle(new Point2D[]{firstLineOfBarrel.getBegin(),
+                firstLineOfBarrel.getEnd(),
+                secondLineOfBarrel.getEnd(),
+                secondLineOfBarrel.getBegin()});
+
     }
 
     /** {@inheritDoc} **/

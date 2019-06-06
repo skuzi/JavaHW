@@ -1,59 +1,32 @@
 package ru.hse.kuzyaka.cannon;
 
-/** Enum representing a projectile type **/
+/**
+ * Enum representing a projectile type
+ **/
 public enum ProjectileType {
-    BIG {
-        @Override
-        public double radius() {
-            return 13;
-        }
+    BIG(13, 2, 20),
+    MEDIUM(8, 2.4, 10),
+    SMALL(3, 2.7, 5);
 
-        @Override
-        public double velocity() {
-            return 2;
-        }
+    private final double radius;
+    private final double velocity;
+    private final double explosionRadius;
 
-        @Override
-        public double explosionRadius() {
-            return 20;
-        }
-    },
-    MEDIUM {
-        @Override
-        public double radius() {
-            return 8;
-        }
+    ProjectileType(double radius, double velocity, double explosionRadius) {
+        this.radius = radius;
+        this.velocity = velocity;
+        this.explosionRadius = explosionRadius;
+    }
 
-        @Override
-        public double velocity() {
-            return 2.4;
-        }
+    public double radius() {
+        return radius;
+    }
 
-        @Override
-        public double explosionRadius() {
-            return 10;
-        }
-    },
-    SMALL {
-        @Override
-        public double radius() {
-            return 3;
-        }
+    public double velocity() {
+        return velocity;
+    }
 
-        @Override
-        public double velocity() {
-            return 2.7;
-        }
-
-        @Override
-        public double explosionRadius() {
-            return 5;
-        }
-    };
-
-    public abstract double radius();
-
-    public abstract double velocity();
-
-    public abstract double explosionRadius();
+    public double explosionRadius() {
+        return explosionRadius;
+    }
 }
