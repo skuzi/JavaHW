@@ -1,7 +1,6 @@
 package ru.hse.kuzyaka.myjunit;
 
 import ru.hse.kuzyaka.myjunit.annotations.*;
-import ru.hse.kuzyaka.myjunit.TestStatus;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -31,20 +30,20 @@ public class MyJUnit {
         List<Method> afterMethods = getAnnotatedMethods(methods, After.class);
         List<Method> testMethods = getAnnotatedMethods(methods, Test.class);
 
-        if (!allStatic(beforeClassMethods) || !allStatic(afterClassMethods)) {
+        if (anyNotStatic(beforeClassMethods) || anyNotStatic(afterClassMethods)) {
             throw new MyJUnitTestException("all BeforeClass and AfterClass methods must be static");
         }
 
-        if (!allWithNoParameters(beforeClassMethods) ||
-                !allWithNoParameters(afterClassMethods) ||
-        !allWithNoParameters(beforeMethods) ||
-        !allWithNoParameters(afterMethods) ||
-        !allWithNoParameters(testMethods)) {
+        if (anyWithParameters(beforeClassMethods) ||
+                anyWithParameters(afterClassMethods) ||
+                anyWithParameters(beforeMethods) ||
+                anyWithParameters(afterMethods) ||
+                anyWithParameters(testMethods)) {
             throw new MyJUnitTestException("all methods must have zero parameters");
         }
 
         Constructor<?> testConstructor = null;
-        if (!allStatic(testMethods)) {
+        if (anyNotStatic(testMethods)) {
             try {
                 testConstructor = testClass.getConstructor();
             } catch (NoSuchMethodException e) {
@@ -83,8 +82,8 @@ public class MyJUnit {
         return testResults;
     }
 
-    private static boolean allWithNoParameters(List<Method> methods) {
-        return methods.stream().allMatch(method -> method.getParameterCount() == 0);
+    private static boolean anyWithParameters(List<Method> methods) {
+        return !methods.stream().allMatch(method -> method.getParameterCount() == 0);
     }
 
     private static TestResult runTest(Method method, Object instance) {
@@ -124,8 +123,8 @@ public class MyJUnit {
         }
     }
 
-    private static boolean allStatic(List<Method> methods) {
-        return methods.stream().allMatch(method -> Modifier.isStatic(method.getModifiers()));
+    private static boolean anyNotStatic(List<Method> methods) {
+        return !methods.stream().allMatch(method -> Modifier.isStatic(method.getModifiers()));
     }
 
     private static List<Method> getAnnotatedMethods(Method[] methods, Class<? extends Annotation> annotation) {
