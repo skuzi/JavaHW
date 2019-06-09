@@ -3,7 +3,7 @@ jdk:
 - oraclejdk11
 
 env:
-- PROJECT_DIR=threadpool
+- PROJECT_DIR=myjunit
 
 before_script:
 - cd "$PROJECT_DIR"
